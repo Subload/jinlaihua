@@ -364,6 +364,26 @@ const api = {
 		})
 	},
 	
+	// OTC我的订单
+	getOrderRecord:(data) => {
+		return request.request({
+		    url: '/c2c/getOrderRecord',
+		    method: 'POST',
+			data: encode(data)
+		})
+	},
+	
+	// OTC交易
+	c2ctransaction:(data) => {
+		return request.request({
+		    url: '/c2c/c2ctransaction',
+		    method: 'POST',
+			data: encode(data)
+		})
+	},
+	
+	
+	
 	
 	
 	

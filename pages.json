@@ -342,6 +342,14 @@
             	}
             }
         }
+        ,{
+            "path" : "pages/otc/order/order",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/otc/release/release",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
@@ -354,7 +362,8 @@
 			"titleView":false  ,//不启用系统导航
 			"navigationStyle":"custom" ,// 关闭导航栏
 			"background":"#081432"
-		}
+		},
+		"pageOrientation": "portrait"
 		
 	},
 	"tabBar": {

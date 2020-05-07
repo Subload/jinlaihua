@@ -9,7 +9,6 @@
 		>
 		</auto-nav-bar>	
 		
-		
 		<view class="main-box">
 			<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :down="downOption" :up="upOption" >
 				<view class="clear30"></view>
@@ -53,33 +52,49 @@
 			<view class="clear30"></view>
 		</view>
 		
+		<view class="zhezhao_box" v-if="showzhezhao">
+			<view class="zhezhao" @click="handleZhezhao"></view>
+			<view class="zhezhao_info">
+				<view class="clearfix" @click="handleIwillbuy('sell')">
+					<view><image src="/static/release.png" mode="aspectFill"></image></view>
+					<view>我要出售</view>
+				</view>
+				<view class="clearfix" @click="handleOrder">
+					<view><image src="/static/order.png" mode="aspectFill"></image></view>
+					<view>订单记录</view>
+				</view>
+			</view>
+		</view>
+		
 		<uni-popup ref="payment" type="bottom" >
 			<view class="order_payment">
 				<view class="order_payment_top">
 					<view class="order_payment_cancel" @click="cancel"><image src="/static/pay/close@3x.png" mode="aspectFill"></image></view>
 					<text>购买JLH</text>
 				</view>
-				<view class="main-box ">
+				<view class="main-box pay-type-box">
 					<view class="buy-danjia">单价 <text>¥{{checkedInfo.price}}</text></view>
-					<view class="clearfix pay-type">
+					<!-- <view class="clearfix pay-type">
 						<view :class="emptionType=='money'?'active':''" @click="changeEmptionType('money')">按金额购买</view>
 						<view :class="emptionType=='num'?'active':''" @click="changeEmptionType('num')">按数量购买</view>
-					</view>
-					<view class="pay-type-money" v-if="emptionType=='money'">
+					</view> -->
+					<view class="pay-type-input pay-type-money" v-if="emptionType=='money'">
 						<input type="number" placeholder="请输入购买金额" />
 					</view>
-					<view class="pay-type-num" v-else>
+					<view class="pay-type-input pay-type-num" v-else>
 						<input type="number" placeholder="请输入购买数量" />
 					</view>
-					<view>限额：¥{{checkedInfo.quota}}  ~  ¥{{checkedInfo.num*checkedInfo.price}}</view>
-					<view>交易数量 0.0000 JLH</view>
-					<view class="clearfix">
+					<view class="pay-type-quota">
+						<view>限额：¥{{checkedInfo.quota}}  ~  ¥{{checkedInfo.num*checkedInfo.price}}</view>
+						<view>交易数量 0.0000 JLH</view>
+					</view>
+					<view class="clearfix pay-type-Disbursements">
 						<text>实付款</text>
 						<view>¥<text>0.00</text></view>
 					</view>
-					<view class="clearfix">
-						<view>S后自动取消</view>
-						<view>下单</view>
+					<view class="clearfix pay-type-btn-box">
+						<view class="pay-type-btn pay-type-btn-left">{{cancelOrderText}}</view>
+						<view class="pay-type-btn pay-type-btn-right">下单</view>
 					</view>
 				</view>
 			</view>
@@ -92,6 +107,7 @@
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	// 引入mescroll-mixins.js
 	import MescrollMixin from "@/components/mescroll-uni/mescroll-mixins.js";
+	var timer;
 	
 	export default {
 		mixins: [MescrollMixin], // 使用mixin
@@ -159,7 +175,13 @@
 				// 列表点击的item
 				checkedInfo:{},
 				// 购买方式：金额/数量
-				emptionType:"money",
+				emptionType:"num",
+				// 60s后取消订单
+				cancelOrderText:"60S后自动取消",
+				
+				// 右上角遮罩显隐
+				showzhezhao:false
+				
 				
 			}
 		},
@@ -168,16 +190,37 @@
 				uni.navigateBack({});
 			},
 			handleRightClick(){
-				uni.navigateBack({});
+				this.showzhezhao = true;
+				
+			},
+			// 点击遮罩层
+			handleZhezhao(){
+				this.showzhezhao = false;
+			},
+			// 点击我要出售/我要购买
+			handleIwillbuy(opt){
+				this.handleZhezhao()
+				uni.navigateTo({
+					url:'/pages/otc/release/release?title='+opt
+				})
+			},
+			// 点击订单记录
+			handleOrder(){
+				this.handleZhezhao()
+				uni.navigateTo({
+					url:'/pages/otc/order/order'
+				})
 			},
 			
 			// 拉起popup
 			getPopup(item){
 				this.checkedInfo = item;
 				this.$refs['payment'].open()
+				this.cancelOrder()
 			},
 			cancel(type) {
-				this.$refs['payment'].close()
+				this.$refs['payment'].close(timer)
+				clearInterval(timer)
 			},
 			
 			// 更改购买方式
@@ -187,6 +230,19 @@
 			
 			// 获取列表数据
 			
+			// 60s倒计时
+			cancelOrder(){
+				let num = 60
+				this.cancelOrderText = num + "S后取消订单";
+				timer = setInterval(()=>{
+					this.cancelOrderText = num + "S后取消订单";
+					num--;
+					if(num == -1){
+						clearInterval(timer)
+						return
+					}
+				},1000)
+			},
 			
 			/*下拉刷新的回调, 有三种处理方式:*/
 			downCallback(){
@@ -317,16 +373,106 @@
 	padding-left: 10rpx;
 }
 .pay-type{
-	margin-bottom: 10rpx;
+	margin-bottom: 20rpx;
 }
 .pay-type view{
 	float: left;
 	padding: 10rpx 30rpx;
 	font-size: 28rpx;
-	border-bottom: 2rpx solid #12224C;
+	border-bottom: 2px solid #12224C;
 }
 .pay-type view.active{
 	color: #FCC44D;
-	border-bottom: 2rpx solid #FCC44D;
+	border-bottom: 2px solid #FCC44D;
+}
+.pay-type-input{
+	margin-bottom: 20rpx;
+}
+.pay-type-input input{
+	border: 1px solid #ccc;
+	padding: 0 10rpx;
+	height: 80rpx;
+	line-height: 80rpx;
+	border-radius: 15rpx;
+}
+.pay-type-quota{
+	line-height: 1.2;
+}
+.pay-type-quota view:nth-child(2){
+	font-size: 24rpx;
+	text-align: right;
+}
+.pay-type-Disbursements{
+	line-height: 1.8;
+}
+.pay-type-Disbursements>text{
+	float: left;
+	font-size: 32rpx;
+}
+.pay-type-Disbursements view{
+	float: right;
+	color: #FCC44D;
+	font-size: 32rpx;
+	font-weight: 600;
+}
+.pay-type-Disbursements view text{
+	font-size: 40rpx;
+}
+
+.pay-type-box{
+	padding: 20rpx 20rpx 30rpx;
+}
+.pay-type-btn-box{
+	display: flex;
+}
+.pay-type-btn{
+	width: 345rpx;
+	height: 100rpx;
+	line-height: 100rpx;
+	text-align: center;
+	border-radius: 15rpx;
+}
+.pay-type-btn-left{
+	background: #808080;
+}
+.pay-type-btn-right{
+	background: #24DCA3;
+	margin-left: 20rpx;
+}
+
+/* 遮罩层 */
+.zhezhao_box{
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 999999;
+	height: 100vh;
+	width: 100vw;
+}
+.zhezhao{
+	background: rgba(0,0,0,0.5);
+	height: 100%;
+	width: 100%;
+}
+.zhezhao_info{
+	position: absolute;
+	right: 30rpx;
+	top: calc(var(--status-bar-height) + 88rpx);
+	background: #091941;
+	padding: 0 40rpx 30rpx;
+}
+.zhezhao_info>view{
+	padding: 30rpx 0 0;
+}
+.zhezhao_info view view{
+	float: left;
+	line-height: 50rpx;
+}
+.zhezhao_info image{
+	width: 40rpx;
+	height: 40rpx;
+}
+.zhezhao_info view view:nth-child(2){
+	margin-left: 10rpx;
 }
 </style>

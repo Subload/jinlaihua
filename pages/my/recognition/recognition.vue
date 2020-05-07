@@ -61,7 +61,7 @@
 									</view>
 									<view class="">
 										<view>认赠数量:<text>{{listItem.cmc_setnumber}}</text></view>
-										<view>剩余释放:<text>{{listItem.cmc_give_balance}}</text></view>
+										<view>已释放:<text>{{listItem.cmc_give_balance}}</text></view>
 									</view>
 								</view>
 								<view class="recognitionItem_re">认赠时间：{{listItem.cmc_renzengdate.time|timeStamp}}</view>

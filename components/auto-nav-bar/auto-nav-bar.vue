@@ -23,7 +23,7 @@
 					<image class="back-list" src="/static/my/set@3x.png"></image>
 				</view>
 				<view v-if="rightOrder" class="menu-icon" @tap="onClickRight">
-					<image class="back-list" src="/static/order.png"></image>
+					<image class="back-list" src="/static/option.png"></image>
 				</view>
 			</view>  
 		</view>  

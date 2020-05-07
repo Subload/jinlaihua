@@ -40,7 +40,8 @@
                 "privacyDescription" : {
                     "NSPhotoLibraryUsageDescription" : "需要上传二维码图片",
                     "NSPhotoLibraryAddUsageDescription" : "需要保存推广二维码图片"
-                }
+                },
+                "idfa" : false
             },
             /* SDK配置 */
             "sdkConfigs" : {
@@ -83,9 +84,9 @@
             },
             "splashscreen" : {
                 "android" : {
-                    "hdpi" : "C:/Users/Administrator/Desktop/splash.9.png",
-                    "xhdpi" : "C:/Users/Administrator/Desktop/splash.9.png",
-                    "xxhdpi" : "C:/Users/Administrator/Desktop/splash.9.png"
+                    "hdpi" : "",
+                    "xhdpi" : "",
+                    "xxhdpi" : ""
                 },
                 "ios" : {
                     "iphone" : {

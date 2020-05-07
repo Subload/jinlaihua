@@ -149,7 +149,7 @@
 			},
 			onTap() {
 				if (!this.maskClick) return
-				this.close()
+				// this.close()
 			}
 		}
 	}

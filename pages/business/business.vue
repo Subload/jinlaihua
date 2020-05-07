@@ -55,23 +55,15 @@
 						</view>
 					</view>
 				</view>
-				
-				<view class="business-trade-title"><text>交易</text></view>
+				<view class="clear30"></view>
+				<view class="clear30"></view>
+				<view class="clear30"></view>
+				<view class="clear15"></view>
 				<view class="business-trade clearfix">
 					<view class="business-trade-box business-trade-left">
-						<view>买入</view>
-						<view><input type="number" pattern="[0-9]*" value="" placeholder="买入价格" /></view>
-						<view>官方指导价：{{dataList.price}}</view>
-						<view><input type="number" pattern="[0-9]*" value="" placeholder="买入数量" /></view>
-						<view>请根据实际情况买入</view>
 						<view class="business-btn-buy business-btn" @click="toSecMarket('buy')">我要买入</view>
 					</view>
 					<view class="business-trade-box business-trade-right">
-						<view>卖出</view>
-						<view><input type="number" pattern="[0-9]\*" value="" placeholder="卖出价格" /></view>
-						<view>官方指导价：{{dataList.price}}</view>
-						<view><input type="number" pattern="[0-9]\*" value="" placeholder="卖出数量" /></view>
-						<view>可卖出数量：{{dataList.balance}}</view>
 						<view class="business-btn-sell business-btn" @click="toSecMarket('sell')">我要卖出</view>
 					</view>
 				</view>
@@ -265,22 +257,14 @@
 .business-list-right .business-list-info view:nth-child(1){
 	color: #ff3e3e;
 }
-.business-trade-title{
-	height: 80rpx;
-	line-height: 80rpx;
-}
-.business-trade-title text{
-	display: inline-block;
-	color: #fcc44d;
-	font-size: 38rpx;
-	font-weight: 400;
-	height: 80rpx;
-	line-height: 80rpx;
-	border-bottom: 2rpx solid #fcc44d;
-}
+
 .business-trade{
 	display: flex;
-	padding: 20rpx 0;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	padding-bottom: 20rpx;
+	width: 100%;
 }
 .business-trade>view{
 	flex: 1;
@@ -290,30 +274,6 @@
 }
 .business-trade-right{
 	padding-left: 10rpx;
-}
-.business-trade-box *{
-	display: block;
-	width: 100%;
-}
-.business-trade-box view{
-	margin-bottom: 10rpx;
-}
-.business-trade-box view:nth-child(1){
-	font-size: 38rpx;
-}
-.business-trade-box input{
-	display: block;
-	box-sizing: border-box;
-	border: 1rpx solid #535b70;
-	height: 100rpx;
-	line-height: 100rpx;
-	padding: 0 15rpx;
-}
-.business-trade-box>view:nth-child(3),
-.business-trade-box>view:nth-child(5){
-	font-size: 28rpx;
-	color: #a3a3a3;
-	margin-bottom: 20rpx;
 }
 .business-btn{
 	border-radius: 15rpx;
