@@ -1,0 +1,397 @@
+{
+	"pages": [
+		{
+		    "path" : "pages/guide/guide",
+		    "style" : {
+				"navigationBarTitleText": "忘记密码",
+				"app-plus": {
+					"animationType": "fade-out",
+					"animationDuration": 5000
+				}
+			}
+		},
+		{
+		    "path" : "pages/notice/notice",
+		    "style" : {
+				"navigationBarTitleText": "快讯",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+		},
+		{
+            "path" : "pages/quotation/quotation",
+            "style" : {
+				"navigationBarTitleText": "行情" ,// 导航栏标题文字内容
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/business/business",
+            "style" : {
+				"navigationBarTitleText": "交易",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/store/store",
+            "style" : {
+				"navigationBarTitleText": "商城",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/my",
+            "style" : {
+				"navigationBarTitleText": "我的",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/quotation/product/product",
+            "style" : {
+				"navigationBarTitleText": "通证详情",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/notice/noticeDetails/noticeDetails",
+            "style" : {
+				"navigationBarTitleText": "公告详情",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/login/login",
+            "style" : {
+				"navigationBarTitleText": "登录",
+				"app-plus": {
+					"animationType": "slide-in-top"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/register/register",
+            "style" : {
+				"navigationBarTitleText": "注册",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/set/set",
+            "style" : {
+				"navigationBarTitleText": "注册",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/retrieve/retrieve",
+            "style" : {
+				"navigationBarTitleText": "忘记密码",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/store/storeList/storeList",
+            "style" : {
+				"navigationBarTitleText": "商品列表",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/store/storeDetails/storeDetails",
+            "style" : {
+				"navigationBarTitleText": "商品详情",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/store/storeOrder/storeOrder",
+            "style" : {
+				"navigationBarTitleText": "提交订单",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+		,{
+		    "path" : "pages/store/buyMot/buyMot",
+		    "style" : {
+				"navigationBarTitleText": "购买金莱花",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+		}
+        ,{
+            "path" : "pages/my/order/order",
+            "style" : {
+				"navigationBarTitleText": "订单管理",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/address/address",
+            "style" : {
+				"navigationBarTitleText": "收货地址管理",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/consignee/consignee",
+            "style" : {
+				"navigationBarTitleText": "编辑收货人",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/paymentMethod/paymentMethod",
+            "style" : {
+				"navigationBarTitleText": "收款方式",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/addPaymentMethod/addPaymentMethod",
+            "style" : {
+				"navigationBarTitleText": "添加收款方式",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/invitation/invitation",
+            "style" : {
+				"navigationBarTitleText": "我要邀请",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/safetyCenter/safetyCenter",
+            "style" : {
+				"navigationBarTitleText": "安全中心",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/editPassword/editPassword",
+            "style" : {
+				"navigationBarTitleText": "修改密码",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/editTradePassword/editTradePassword",
+            "style" : {
+				"navigationBarTitleText": "修改交易密码",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/team/team",
+            "style" : {
+				"navigationBarTitleText": "我的团队",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/business/webview/webview",
+            "style" : {
+				"navigationBarTitleText": "K线图",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/assetsInfo/assetsInfo",
+            "style" : {
+				"navigationBarTitleText": "资产详情",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/editPhone/editPhone",
+            "style" : {
+				"navigationBarTitleText": "绑定手机号",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/editUserInfo/editUserInfo",
+            "style" : {
+				"navigationBarTitleText": "修改个人信息",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+		,{
+            "path" : "pages/my/editPortrait/editPortrait",
+            "style" : {
+				"navigationBarTitleText": "上传头像",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+		
+        ,{
+            "path" : "pages/my/editNickName/editNickName",
+            "style" : {
+				"navigationBarTitleText": "修改昵称",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/editRealName/editRealName",
+            "style" : {
+				"navigationBarTitleText": "实名认证",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/recognition/recognition",
+            "style" : {
+				"navigationBarTitleText": "我的认赠",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/my/team/secLv/secLv",
+            "style" : {
+				"navigationBarTitleText": "下级团队"
+			}
+        }
+        ,{
+            "path" : "pages/agreement/agreement",
+            "style" : {
+				"navigationBarTitleText": "用户协议",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+		// otc交易
+        ,{
+            "path" : "pages/otc/iWillBuy/iWillBuy",
+			"style" : {
+				"navigationBarTitleText": "我要买",
+				"app-plus": {
+					"animationType": "slide-in-bottom"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/otc/iWillSell/iWillSell",
+            "style" : {
+            	"navigationBarTitleText": "我要卖",
+            	"app-plus": {
+            		"animationType": "slide-in-bottom"
+            	}
+            }
+        }
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "金莱花",
+		"navigationBarBackgroundColor": "#091941",
+		"backgroundColor": "#081432",
+		"backgroundColorTop": "#081432",
+		"backgroundColorBottom": "#081432",
+		"app-plus":{
+			"titleView":false  ,//不启用系统导航
+			"navigationStyle":"custom" ,// 关闭导航栏
+			"background":"#081432"
+		}
+		
+	},
+	"tabBar": {
+		"color": "#fff",
+		"selectedColor": "#fcc44d",
+		"borderStyle": "black",
+		"backgroundColor": "#091941",
+		"list": [{
+				"pagePath": "pages/notice/notice",
+				"text": "快讯",
+				"iconPath": "static/nav/NoticeNomal@3x.png",
+				"selectedIconPath": "static/nav/NoticePress@3x.png"
+			},
+			{
+				"pagePath": "pages/store/store",
+				"text": "商城",
+				"iconPath": "static/nav/StoreNomal@3x.png",
+				"selectedIconPath": "static/nav/StorePress@3x.png"
+			},
+			{
+				"pagePath": "pages/business/business",
+				"text": "交易",
+				"iconPath": "static/nav/TransactionNomal@3x.png",
+				"selectedIconPath": "static/nav/TransactionPress@3x.png"
+			},
+			{
+				"pagePath": "pages/quotation/quotation",
+				"text": "行情",
+				"iconPath": "static/nav/QuotationNomal@3x.png",
+				"selectedIconPath": "static/nav/QuotationPress@3x.png"
+			},
+			{
+				"pagePath": "pages/my/my",
+				"text": "我的",
+				"iconPath": "static/nav/MyNomal@3x.png",
+				"selectedIconPath": "static/nav/MyPress@3x.png"
+			}
+		]
+	}
+}
