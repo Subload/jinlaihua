@@ -19,8 +19,8 @@
 						</view>
 						<view v-if="dataList.buylist && dataList.buylist.length>0">
 							<view class="business-list-info clearfix" v-for="(buyItem, index) in dataList.buylist" :key="index">
-								<view>{{index}}</view>
-								<view>{{buyItem.num}}</view>
+								<view>{{index+1}}</view>
+								<view>{{buyItem.quantity}}</view>
 								<view>{{buyItem.price}}</view>
 							</view>
 						</view>
@@ -42,8 +42,8 @@
 						<view v-if="dataList.selllist && dataList.selllist.length>0">
 							<view class="business-list-info clearfix" v-for="(sellItem, index) in dataList.selllist" :key="index">
 								<view>{{sellItem.price}}</view>
-								<view>{{sellItem.num}}</view>
-								<view>{{index}}</view>
+								<view>{{sellItem.quantity}}</view>
+								<view>{{index+1}}</view>
 							</view>
 						</view>
 						<view v-else>
@@ -59,15 +59,16 @@
 				<view class="clear30"></view>
 				<view class="clear30"></view>
 				<view class="clear15"></view>
-				<view class="business-trade clearfix">
-					<view class="business-trade-box business-trade-left">
-						<view class="business-btn-buy business-btn" @click="toSecMarket('buy')">我要买入</view>
-					</view>
-					<view class="business-trade-box business-trade-right">
-						<view class="business-btn-sell business-btn" @click="toSecMarket('sell')">我要卖出</view>
-					</view>
-				</view>
 			</mescroll-body>
+			
+			<view class="business-trade clearfix" v-if="dataList.isopen && dataList.isopen=='1'">
+				<view class="business-trade-box business-trade-left">
+					<view class="business-btn-buy business-btn" @click="toSecMarket('buy')">买入</view>
+				</view>
+				<view class="business-trade-box business-trade-right">
+					<view class="business-btn-sell business-btn" @click="toSecMarket('sell')">卖出</view>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -79,6 +80,7 @@
 	import {
 		mapState,
 	} from 'vuex';
+	let timer;
 	
 	export default {
 		mixins: [MescrollMixin], // 使用mixin
@@ -98,13 +100,14 @@
 					auto: false, // 是否在初始化完毕之后自动执行上拉加载的回调; 默认true
 				},
 				
-				title:"金莱花通证",
+				title:"JLH.MP",
 				// 买卖记录
 				dataList:{
 					price:"1",
 					balance:0,
 					buylist:[],
-					selllist:[]
+					selllist:[],
+					isopen:"0" // 是否开启otc
 				},
 				
 				
@@ -120,7 +123,7 @@
 				})
 				return
 			}
-			this.getBusinessInfo()
+			// this.getBusinessInfo()
 		},
 		onShow: function (option) {
 			uni.showLoading()
@@ -132,48 +135,83 @@
 				return
 			}
 			this.getBusinessInfo()
+			timer = setInterval(()=>{
+				this.getBusinessInfo()
+			},10000)
+		},
+		onHide:function(){
+			clearInterval(timer)
 		},
 		methods: {
 			handleClickRight(){
 				uni.navigateTo({
-					url:'/pages/business/webview/webview'
+					url:'/pages/business/kline/kline'
 				})
 			},
+			
 			
 			// 获取详情
 			getBusinessInfo(){
 				let userid = decode(this.userInfo.data);
 				this.$API.getBusinessInfo({userid}).then(res => {
 					uni.hideLoading()
-					console.log("金莱花通证详情",res)
-					if(res.statusCode == 200){
-						if(res.data.state == 0){
-							this.dataList = res.data.data;
-						}else{
-							uni.showToast({
-								title:"获取详情失败，请稍后刷新重新",
-								icon:"none"
-							})
-						}
-					}else{
+					if(res.statusCode != '200' || res.data.state != '0'){
 						uni.showToast({
-							title:"获取详情失败，请稍后刷新重新",
+							title:"加载失败，请稍后刷新重试",
 							icon:"none"
 						})
+						return
 					}
+					this.dataList = res.data.data;
+					setTimeout(()=>{
+						this.mescroll.endSuccess()
+					},1500)
 				}).catch(err => {
 					// error
-					uni.showToast({
-						title: err.text,
-						icon: 'none',
-					});
+					this.mescroll.endErr()
 					console.log(err)
-					// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
-					// 一个通用的错误提示组件就可以完成
 				})
 			},
 			
 			toSecMarket(opt){
+				if(this.userInfo.accountinfo.data.senior == '0'){
+					uni.showModal({
+						content:"您还未进行实名认证，请先实名认证",
+						showCancel:false,
+						confirmText:"去实名",
+						success: (res) => {
+							if(res.confirm){
+								uni.navigateTo({
+									url:'/pages/my/editRealName/editRealName'
+								})
+							}
+						}
+					})
+					return
+				}
+				if(this.userInfo.accountinfo.data.senior == '1'){
+					uni.showModal({
+						content:"您实名认证审核中，请等待实名完成后操作",
+						showCancel:false,
+						confirmText:"确定",
+					})
+					return
+				}
+				if(this.userInfo.accountinfo.data.senior == '2'){
+					uni.showModal({
+						content:"您的实名认证审核失败，请重新实名认证",
+						showCancel:false,
+						confirmText:"去实名",
+						success: (res) => {
+							if(res.confirm){
+								uni.navigateTo({
+									url:'/pages/my/editRealName/editRealName'
+								})
+							}
+						}
+					})
+					return
+				}
 				if(opt=="buy"){
 					uni.navigateTo({
 						url:'/pages/otc/iWillBuy/iWillBuy'
@@ -187,9 +225,7 @@
 			
 			// 下拉刷新
 			downCallback(){
-				setTimeout(() => {
-					this.mescroll.endSuccess()
-				},2000)
+				this.getBusinessInfo()
 			},
 			
 		}
@@ -262,9 +298,9 @@
 	display: flex;
 	position: fixed;
 	bottom: 0;
-	left: 0;
+	left: 20rpx;
 	padding-bottom: 20rpx;
-	width: 100%;
+	width: calc(100% - 40rpx);
 }
 .business-trade>view{
 	flex: 1;

@@ -3,16 +3,13 @@
 		<!-- 我的订单 -->
 		<auto-nav-bar
 			leftShow
-			title="我的订单"
+			title="商品订单"
 			@clickLeft="handleLeftClick"
 		></auto-nav-bar>	
 		
 		<view class="clear30"></view>
 		<view class="main-box">
 			<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :down="downOption" :up="upOption" >
-				
-				<xw-empty :isShow="emptyShow" text="暂无相关数据" textColor="#ddd"></xw-empty>
-				
 				<view class="order-list clearfix" v-for="(orderItem, index) in orderData" :key="index">
 					<view class="order-list-box clearfix">
 						<view class="order-list-pic">
@@ -62,12 +59,12 @@
 				// 上拉加载的常用配置
 				upOption: {
 					use: true, // 是否启用上拉加载; 默认true
-					auto: false, // 是否在初始化完毕之后自动执行上拉加载的回调; 默认true
+					auto: true, // 是否在初始化完毕之后自动执行上拉加载的回调; 默认true
 					page: {
 						num: 0, // 当前页码,默认0,回调之前会加1,即callback(page)会从1开始
 						size: 10 // 每页数据的数量,默认10
 					},
-					noMoreSize: 5, // 配置列表的总数量要大于等于5条才显示'-- END --'的提示
+					noMoreSize: 1, // 配置列表的总数量要大于等于5条才显示'-- END --'的提示
 					empty: {
 						tip: '暂无相关数据'
 					}
@@ -97,60 +94,54 @@
 			handleLeftClick(){
 				uni.navigateBack({});
 			},
-			/*mescroll组件初始化的回调,可获取到mescroll对象 (此处可删,mixins已默认)*/
-			// mescrollInit(mescroll) {
-			// 	this.mescroll = mescroll;
-			// },
-			/*下拉刷新的回调, 有三种处理方式:*/
+			// 下啦刷新
 			downCallback(){
-				setTimeout(() => {
-					this.mescroll.endSuccess()
-				},5000)
-				// 第1种: 请求具体接口
-				// uni.request({
-				// 	url: 'xxxx',
-				// 	success: () => {
-				// 		// 请求成功,隐藏加载状态
-				// 		this.mescroll.endSuccess()
-				// 	},
-				// 	fail: () => {
-				// 		// 请求失败,隐藏加载状态
-				// 		this.mescroll.endErr()
-				// 	}
-				// })
-				// // 第2种: 下拉刷新和上拉加载调同样的接口, 那么不用第1种方式, 直接mescroll.resetUpScroll()即可
-				// this.mescroll.resetUpScroll(); // 重置列表为第一页 (自动执行 page.num=1, 再触发upCallback方法 )
-				// // 第3种: 下拉刷新什么也不处理, 可直接调用或者延时一会调用 mescroll.endSuccess() 结束即可
-				// this.mescroll.endSuccess()
-				// 若整个downCallback方法仅调用mescroll.resetUpScroll(),则downCallback方法可删 (mixins已默认)
+				this.upOption.page={
+					num: 0, // 当前页码,默认0,回调之前会加1,即callback(page)会从1开始
+					size: 10 // 每页数据的数量,默认10
+				}
+				this.orderforGoodsAll()
+			},
+			upCallback(page){
+				this.orderforGoodsAll(page);
 			},
 			
 			// 获取订单
-			orderforGoodsAll(){
+			orderforGoodsAll(opt){
 				let userid = decode(this.userInfo.data)
-				this.$API.orderforGoodsAll({userid,start:0,limit:10}).then(res => {
-					console.log("我的订单",res)
+				let pages={userid,start:0,limit:10}
+				if(opt){
+					pages = {
+						userid,
+						start:opt.options.up.page.num*opt.options.up.page.size,
+						limit:opt.options.up.page.size
+					}
+				}
+				
+				this.$API.orderforGoodsAll(pages).then(res => {
+					// console.log("我的订单",res)
 					uni.hideLoading();
-					if(res.statusCode != 200){
+					if(res.statusCode != '200' || res.data.state != '0'){
 						uni.showToast({
 						    title: "获取订单列表失败，请稍后重试",
 							icon: 'none',
 						});
 						return
 					}
-					if(res.data.data.length>0){
-						this.orderData = res.data.data;
+					if(opt){
+						this.orderData=this.orderData.concat(res.data.data);
+						this.mescroll.endSuccess(this.orderData.length);
+						//设置列表数据
 					}else{
-						this.emptyShow = true;
+						this.orderData = res.data.data;
+						setTimeout(()=>{
+							this.mescroll.endSuccess()
+						},1500)
 					}
 				}).catch(err => {
 					// error
 					uni.hideLoading();
-					this.emptyShow = true;
-					uni.showToast({
-					    title: err.text,
-						icon: 'none',
-					});
+					this.mescroll.endErr()
 					console.log(err)
 					// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
 					// 一个通用的错误提示组件就可以完成

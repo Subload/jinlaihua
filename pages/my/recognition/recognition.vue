@@ -28,7 +28,9 @@
 				@transition="transition"
 				@change="changeCurrent" 
 				:current="tabCurrentIndex"
-				@animationfinish="animationfinish">
+				@animationfinish="animationfinish"
+				style="min-height: calc(100vh - var(--status-bar-height) - 288rpx);"
+				>
 				
 				<swiper-item>
 					<view class="main-box">
@@ -56,12 +58,13 @@
 							<view class="recognitionItem clearfix" v-for="(listItem,index) in recognitionList.list" :key="index">
 								<view class="recognitionItem_info clearfix">
 									<view class="">
-										<view>{{listItem.cmc_name}}<text v-if="!listItem.cmc_state">(释放中)</text></view>
-										<view>{{listItem.cmc_code}}</view>
+										<view>{{listItem.cmc_name}}</view>
+										<view><text v-if="!listItem.cmc_state" style="margin-left: 0;">(释放中)</text></view>
 									</view>
-									<view class="">
-										<view>认赠数量:<text>{{listItem.cmc_setnumber}}</text></view>
-										<view>已释放:<text>{{listItem.cmc_give_balance}}</text></view>
+									<view class="" style="font-size: 28rpx;line-height: 1.8;">
+										<view>认赠数量:<text>{{listItem.cmc_setnumber}}个 + {{listItem.cmc_setnumber}}个 </text></view>
+										<view>已释放:<text>{{listItem.cmc_give_balance}}个 + {{listItem.cmc_give_balance}}个</text></view>
+										<!-- <view>剩余释放交易日:<text>{{listItem.剩余释放交易日}}</text></view> -->
 									</view>
 								</view>
 								<view class="recognitionItem_re">认赠时间：{{listItem.cmc_renzengdate.time|timeStamp}}</view>
@@ -178,23 +181,9 @@
 			getRecognition(){
 				let userid = decode(this.userInfo.data)
 				this.$API.recognition({userid}).then(res => {
-					console.log("我的认赠",res)
+					// console.log("我的认赠",res)
 					uni.hideLoading()
-					if(res.statusCode == 200){
-						if(res.data.state == 0){
-							this.recognitionList = res.data.data;
-						}else{
-							uni.showModal({
-								content:"网络错误，请稍后重试",
-								showCancel:false,
-								success: () => {
-									uni.navigateBack({
-										delta:1
-									})
-								}
-							})
-						}
-					}else{
+					if(res.statusCode != '200' || res.data.state != '0'){
 						uni.showModal({
 							content:"网络错误，请稍后重试",
 							showCancel:false,
@@ -204,7 +193,10 @@
 								})
 							}
 						})
+						return
 					}
+					this.recognitionList = res.data.data;
+					
 				}).catch(err => {
 					// error
 					uni.showModal({
@@ -307,7 +299,7 @@ uni-swiper{
 }
 .recognitionItem_info text{
 	color: #FCC44D;
-	margin-left: 20rpx;
+	margin-left: 10rpx;
 }
 .recognitionItem_re{
 	color: #A3A3A3;

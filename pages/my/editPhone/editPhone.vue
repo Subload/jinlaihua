@@ -15,8 +15,8 @@
 			<view class="editPw">
 				<view>手机验证码</view>
 				<input type="number" pattern="[0-9]*" style="width: 50%;" placeholder="手机验证码" v-model="parameter.code" />
-				<view v-show="showGetBtn" class="systemCodeBtn" @click="getSystem">获取验证码</view>
-				<view v-show="!showGetBtn" class="systemCodeBtn countDownBtn">{{countDownBtnText}}</view>
+				<view v-if="showSmsBtn" class="systemCodeBtn" @click="getSystem">获取验证码</view>
+				<view v-else class="systemCodeBtn countDownBtn">{{smsBtnText}}</view>
 			</view>
 		</view>
 		<view class="btn editPw_btn" @click="handleReset">绑定</view>
@@ -27,14 +27,12 @@
 	import { regPhone,regCheckNum } from '@/utils/util.js'
 	import { decode } from '@/utils/des3.js' // 参数加密方法
 	import {
-		mapState
+		mapState,
+		mapMutations
 	} from 'vuex';
 	
-	var time = 60;
-	var timeDown;
-	
 	export default {
-		computed: mapState([ 'hasLogin','userInfo']),
+		computed: mapState([ 'hasLogin','userInfo','showSmsBtn','smsBtnText']),
 		data() {
 			return {
 				parameter:{
@@ -43,22 +41,19 @@
 					area:"",
 					code:""
 				},
-				// 倒计时显示
-				showGetBtn:true,
-				countDownBtnText:"60秒后重新获取"
 			}
 		},
 		onLoad:function(){
 			this.parameter.userid = decode(this.userInfo.data);
-			console.log(this.parameter)
 		},
 		methods: {
+			...mapMutations(['smsCountdown']),
+			
 			handleLeftClick(){
 				uni.navigateBack({});
 			},
 			
 			// 获取验证码
-			
 			// 重置按钮
 			handleReset(){
 				uni.showLoading()
@@ -130,7 +125,6 @@
 					return
 				};
 				
-				this.countDown()
 				this.$API.sendCodeByUser({userid:this.parameter.userid}).then(res => {
 					// success
 					if(res.data.message == 10073){
@@ -138,53 +132,24 @@
 							title:"验证码已发送，请注意查收",
 							icon:"none",
 						})
+						this.smsCountdown()
 					}else if(res.data.message == 10045){
-						time = 60;
-						this.showGetBtn = !this.showGetBtn;
-						clearInterval(timeDown);
 						uni.showToast({
 							title:"该账号不存在",
 							icon:"none",
 						})
 					}else{
-						time = 60;
-						this.showGetBtn = !this.showGetBtn;
-						clearInterval(timeDown);
 						uni.showToast({
 							title:res.data.message,
 							icon:"none",
 						})
 					}
-					
-					// 更改倒计时状态
-					console.log(res)
 				}).catch(err => {
 					// error
-					time = 60;
-					this.showGetBtn = !this.showGetBtn;
-					clearInterval(timeDown);
-					uni.showToast({
-					    title: err.text,
-						icon: 'none',
-					    duration: 2000
-					});
 					console.log(err)
 					// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
 					// 一个通用的错误提示组件就可以完成
 				})
-			},
-			// 倒计时
-			countDown(){
-				this.showGetBtn = !this.showGetBtn;
-				timeDown = setInterval(()=>{
-					this.countDownBtnText = time+"秒后重新获取";
-					time-=1;
-					if(time == 0){
-						time = 60;
-						this.showGetBtn = !this.showGetBtn;
-						clearInterval(timeDown);
-					}
-				},1000)
 			},
 			
 		}
@@ -213,7 +178,7 @@
 .systemCode{
 	width: 50%;
 }
-.systemCodeBtn{
+.editPw .systemCodeBtn{
 	position: absolute;
 	right: 20rpx;
 	bottom: 0rpx;

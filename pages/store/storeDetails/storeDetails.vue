@@ -90,7 +90,6 @@
 		},
 		onLoad:function(option){
 			 this.storeInfo=JSON.parse(decodeURIComponent(option.item));
-			 console.log(JSON.parse(decodeURIComponent(option.item)).logo)
 			 this.swiperInfo.info[0].logo = JSON.parse(decodeURIComponent(option.item)).logo||'/static/store/images/pro_01.jpg'
 		},
 		methods: {
@@ -104,7 +103,7 @@
 				this.bgColor = "rgba(9, 25, 65, " + e.scrollTop * 0.01 + ")"
 			},
 			handleGoBuy(){
-				console.log(this.hasLogin)
+				// console.log(this.hasLogin)
 				if(!this.hasLogin){
 					uni.showModal({
 						content:"请先登录",
@@ -119,9 +118,9 @@
 					})
 					return
 				}
-				if(this.userInfo.accountinfo.data.senior == 0){
+				if(this.userInfo.accountinfo.data.senior == '0'){
 					uni.showModal({
-						content:"您还未实名认证，请先实名认证",
+						content:"您还未实名认证，请先至我的->安全中心进行实名认证",
 						showCancel:false,
 						confirmText:"去实名",
 						success: (res) => {
@@ -134,14 +133,14 @@
 					})
 					return
 				}
-				if(this.userInfo.accountinfo.data.senior == 1){
+				if(this.userInfo.accountinfo.data.senior == '1'){
 					uni.showModal({
 						content:"您的账号实名审核中，完成审核后方可进行此操作",
 						showCancel:false,
 					})
 					return
 				}
-				if(this.userInfo.accountinfo.data.senior == 2){
+				if(this.userInfo.accountinfo.data.senior == '2'){
 					uni.showModal({
 						content:"您的账号实名审核失败，请重新实名认证",
 						showCancel:false,

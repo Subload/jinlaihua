@@ -3,11 +3,15 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+
 const store = new Vuex.Store({
 	state: {
 		userInfo: {},
 		hasLogin: false,
-		firstTime: false //是否是登陆后第一次进入我的
+		firstTime: false,//是否是登陆后第一次进入我的
+		// 全局短信验证码倒计时
+		showSmsBtn: true,
+		smsBtnText:'60秒后重新获取'
 	},
 	mutations: {
 		login(state, provider) {//改变登录状态
@@ -31,6 +35,20 @@ const store = new Vuex.Store({
 			uni.removeStorage({
 				key: 'hasLogin'
 			})
+		},
+		// 全局短信验证码方法
+		smsCountdown(state){
+			let guiNum = '60';
+			state.showSmsBtn = false
+			state.smsBtnText = guiNum+'秒后重新获取'
+			let guideTimer = setInterval(()=>{
+				guiNum = guiNum - 1
+				state.smsBtnText = guiNum+'秒后重新获取'
+				if(guiNum == '0'){
+					clearInterval(guideTimer)
+					state.showSmsBtn = true
+				}
+			},1000)
 		}
 	},
 })

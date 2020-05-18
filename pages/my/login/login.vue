@@ -14,7 +14,7 @@
 		<view class="main-box">
 			<view class="login_item">
 				<text class="login_item_text">手机号</text>
-				<input type="number" pattern="[0-9]*" class="login_item_input" v-model="userName" placeholder="请输入手机号/邮箱" />
+				<input type="number" pattern="[0-9]*" class="login_item_input" v-model="userName" placeholder="请输入手机号" />
 			</view>
 			<view class="login_item">
 				<text class="login_item_text">密码</text>
@@ -44,7 +44,6 @@
 			}
 		},
 		onBackPress(e) {
-			console.log(e);
 			if (e.from == 'backbutton') {
 				uni.switchTab({
 				    url: "/pages/notice/notice"
@@ -61,10 +60,7 @@
 			},
 			handleRightClick(){
 				uni.navigateTo({
-				    url: '../register/register',
-					fail: (res) => {
-						console.log(res)
-					}
+				    url: '../register/register'
 				});
 			},
 			handleLogin(){
@@ -93,7 +89,7 @@
 					// 10011 密码错误
 					// 10012 账号被冻结
 					// 10013 成功
-					console.log(res)
+					// console.log(res)
 					if(res.statusCode == 200){
 						uni.hideLoading()
 						if(res.data.message == "10008"){

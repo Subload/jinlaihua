@@ -1,10 +1,10 @@
 <template>
-	<view class="pro-list-pro" @tap="onHandleClick">
+	<view :class="['pro-list-pro',price=='0'?'active':'']"  @tap="onHandleClick">
 		<view class="pro-list-pro-pic">
 			<image class="pro-list-pro-img" :src="picUrl" mode="aspectFill"></image>
 		</view>
 		<view class="pro-list-pro-title">{{title}}</view>
-		<view class="pro-list-pro-price">¥{{price}}</view>
+		<view class="pro-list-pro-price">{{price=='0'?'待上架':'¥'+price}}</view>
 	</view>
 </template>
 
@@ -39,6 +39,11 @@
 		width: 330rpx;
 		background: #091941;
 		margin-bottom: 30rpx;
+		border-radius: 10rpx;
+		overflow: hidden;
+	}
+	.pro-list-pro.active{
+		filter: grayscale(70%);
 	}
 	.pro-list-pro:nth-child(even){
 		margin-left: 30rpx;
@@ -55,6 +60,7 @@
 		padding: 0 15rpx;
 		color: #ff3e3e;
 		font-size: 30rpx;
+		padding-bottom: 15rpx;
 	}
 	.pro-list-pro-img{
 		width: 330rpx;

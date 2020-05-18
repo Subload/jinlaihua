@@ -26,7 +26,7 @@
 			<view class="clear30"></view>
 			
 			<view class="invite_text">
-				<text>投资金莱花<br/>让财富有另一种可能</text>
+				<text>加入金莱花<br/>让财富有另一种可能</text>
 			</view>
 		</view>
 		
@@ -74,7 +74,7 @@
 			getShareUrl(){
 				let userid = decode(this.userInfo.data)
 				this.$API.getShareUrl({userid}).then(res => {
-					console.log("邀请界面",res)
+					// console.log("邀请界面",res)
 					this.val = res.data.data;
 					this.icon = this.userInfo.icon || "/static/logo.png"
 					this.creatQrcode()

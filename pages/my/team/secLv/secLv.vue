@@ -17,7 +17,7 @@
 					</view>
 					<!-- <view class="team_lv" v-html="item.setnumber">{{item.setnumber}}</view> -->
 					<view class="team_num">
-						<text>认购通证数量:</text><br/>{{item.setnumber}}
+						<text>认购JLH.MP数量:</text><br/>{{item.setnumber}}
 					</view>
 				</view>
 			</view>

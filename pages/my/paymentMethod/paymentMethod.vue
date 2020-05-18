@@ -17,8 +17,9 @@
 					<image class="pro-list-img" src="/static/my/arrow@3x.png" mode="aspectFit"></image>
 				</view>
 				<text class="paymentMethod_set">
-					<text  v-if="item.name=='支付宝'">{{userInfo.accountinfo.data.payinfo.zfbid?"已设置":"未设置"}}</text>
-					<text v-else>{{userInfo.accountinfo.data.payinfo.wxid?"已设置":"未设置"}}</text>
+					<text v-if="item.name=='支付宝'">{{userInfo.accountinfo.data.payinfo.zfbrealname?"已设置":"未设置"}}</text>
+					<text v-if="item.name=='微信'">{{userInfo.accountinfo.data.payinfo.wxrealname?"已设置":"未设置"}}</text>
+					<text v-if="item.name=='银行卡'">{{userInfo.accountinfo.data.payinfo.bankrealname?"已设置":"未设置"}}</text>
 				</text>
 			</view>
 		</view>
@@ -40,10 +41,15 @@
 					name:"支付宝",
 					logo:"/static/pay/aliPay@3x.png",
 				},
+				// {
+				// 	uid:"1",
+				// 	name:"微信",
+				// 	logo:"/static/pay/wxPay@3x.png",
+				// },
 				{
-					uid:"1",
-					name:"微信",
-					logo:"/static/pay/wxPay@3x.png",
+					uid:"2",
+					name:"银行卡",
+					logo:"/static/pay/balancePay@3x.png",
 				}]
 			}
 		},
@@ -60,9 +66,6 @@
 					url: "/pages/my/addPaymentMethod/addPaymentMethod?item=" + encodeURIComponent(JSON.stringify(item)),
 				});
 			}
-			
-			
-			
 		}
 	}
 </script>

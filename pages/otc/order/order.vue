@@ -19,21 +19,34 @@
 						<scroll-view style="height: 100%;" scroll-y="true" @scrolltolower="lower" scroll-with-animation >
 								<view class='content'>
 									<view class='card' v-for="(item,index) in listItem" v-if="listItem.length > 0" :key="index">
-										<view class="card-sj">时间：{{item.sj}}</view>
-										<view class="clearfix card-info">
+										<view class="card-sj clearfix">
+											时间：{{item.sj}}
+											<view class="card-btn" v-if="item.state">{{item.state == "0"?"挂单中":item.state == "1"?"待买家付款":item.state == "2"?"待卖家确认收款":item.state == "3"?"已撤销":item.state == "5"?"已完成":item.state == "4"?"申诉中":"未知状态"}}</view>
+											<view class="card-btn" v-else>已完成</view>
+										</view>
+										<view class="clearfix card-info" @click="jumpTo(item)">
 											<view class="card-info-left">
-												<view><text>{{item.type?"出售":"购买"}}</text>{{item.symbol}}</view>
-												<view>订单号：{{item.ordernumber}}</view>
-												<view>{{item.type?"购买方":"出售方"}}：{{item.name}}</view>
+												<view><text>{{item.type=='0'?"买入":"出售"}}</text>{{item.symbol}}</view>
+												<view v-if="item.ordernumber">订单号：{{item.ordernumber}}</view>
+												<view v-if="item.buyer">
+													<view v-if="item.buyer">买入：{{item.buyer}}</view>
+													<view v-if="item.seller">卖出：{{item.seller}}</view>
+												</view>
+												<view v-else>
+													<view v-if="item.type">{{item.type=='0'?"出售方":"买入方"}}：{{item.name}}</view>
+												</view>
 											</view>
 											<view class="card-info-right">
-												<view>¥<text>{{item.price}}</text></view>
-												<view>X{{item.copyquantity}}</view>
-												<view class="card-info-total">总额：¥<text>{{item.cny}}</text></view>
+												<view>¥<text>{{item.price?Number(item.price).toFixed(2):(item.cny/item.copyquantity).toFixed(2)}}</text></view>
+												<view>X{{item.residuequantity?(item.residuequantity==item.copyquantity?item.copyquantity:item.residuequantity=='0.00'?item.quantity:item.residuequantity):(item.copyquantity?item.copyquantity:item.quantity)}}</view>
+												<!-- <view class="card-info-total">总额：¥<text>{{item.cny?item.cny:item.tranprice?item.tranprice:(item.price*item.quantity).toFixed(2)}}</text></view> -->
+												<view class="card-info-total">总额：¥<text>
+												{{((item.price?Number(item.price).toFixed(2):(item.cny/item.copyquantity).toFixed(2))*(item.residuequantity?(item.residuequantity==item.copyquantity?item.copyquantity:item.residuequantity=='0.00'?item.quantity:item.residuequantity):(item.copyquantity?item.copyquantity:item.quantity))).toFixed(2)}}
+												</text></view>
 											</view>
 										</view>
-										<view class="card-btn clearfix">
-											<view>{{item.state == "0"?"撤销":"1"?"去支付":"3"?"已撤销":"5"?"已完成":""}}</view>
+										<view class="card-btn-bot clearfix" v-if="item.state&&item.state=='0'">
+											<view class="card-btn-btn" @click="cancelOrder(item.orderid)">撤销</view>
 										</view>
 									</view>
 									<view class='noCard' v-if="listItem.length===0">
@@ -49,35 +62,28 @@
 </template>
 
 <script>
-import { throttle } from 'utils/util.js'
-import navTab from '@/components/navTab.vue';
+	import { throttle } from 'utils/util.js'
+	import navTab from '@/components/navTab.vue';
 
 // 引入mescroll-mixins.js
 	import MescrollMixin from "@/components/mescroll-uni/mescroll-mixins.js";
+	import { decode } from '@/utils/des3.js' // 参数加密方法
+	import {
+		mapState,
+	} from 'vuex';
 	
 export default {
 	mixins: [MescrollMixin], // 使用mixin
 	components: {navTab},
+	computed: mapState([ 'hasLogin','userInfo','firstTime']),
 	data() {
 		return {
 			currentTab: 0, //sweiper所在页
-			pages:[1,1,1,1], //第几页存储 
-			tabTitle:['我的出售','我的购买','待处理','历史成交'], //导航栏格式
+			pages:[0,0,0,0,0], //第几页存储 
+			tabTitle:['我的出售','我的购买','待处理','申诉中','历史成交'], //导航栏格式
 			list: [
-				[{
-					"otherid": 0,
-					"orderid": 72,
-					"symbol": "JLH",
-					"name": "",
-					"ordernumber": "Trade20200511698309",
-					"state": "0",
-					"orderstate": "挂单中",
-					"type": 0,
-					"price": "100",
-					"sj": "14:44 05/07",
-					"copyquantity": "100",
-					"cny": "10000"
-				}],
+				[],
+				[],
 				[],
 				[],
 				[]
@@ -103,13 +109,34 @@ export default {
 					tip: '暂无相关数据'
 				}
 			},
+			// 提交
+			parameter: {
+				userid: "",
+				type: "4", // 
+				price: "0",
+				quantity: "0",
+				currid: "10",
+				orderid: "0",
+				tradpassword: "", // 交易密码
+				wxpay: "0",
+				alipay: "0",
+				phone: "",
+				nickname: ""
+			},
 		  };
 	},
-	onLoad(e) {
-		
+	onLoad:function(option){
+		if(option.num){
+			this.changeTab(2)
+		}
+		this.parameter.userid = decode(this.userInfo.data);
+		this.parameter.phone = this.userInfo.accountinfo.data.phone
+		this.parameter.nickname = this.userInfo.accountinfo.data.nickname
 	},
-	onShow() {},
-	onHide() {},
+	onShow:function(){
+		uni.showLoading()
+		this.getOrderRecord()
+	},
 	methods: {
 		handleLeftClick(){
 			uni.navigateBack()
@@ -120,25 +147,196 @@ export default {
 		
 		/*下拉刷新的回调, 有三种处理方式:*/
 		downCallback(){
+			this.getOrderRecord()
+		},
+		
+		// 点击跳转到详情或者主单列表
+		jumpTo(item){
+			if(item.master && item.master == '0'){
+				uni.navigateTo({
+					url:'/pages/otc/masterList/masterList?orderid=' + item.orderid
+				})
+			}else if(item.master && item.master == '1'){
+				if(item.otherid){
+					uni.navigateTo({
+						url:'/pages/otc/orderDetails/orderDetails?slaveorderid=' + item.otherid
+					})
+				}else{
+					uni.navigateTo({
+						url:'/pages/otc/orderDetails/orderDetails?slaveorderid=' + item.orderid
+					})
+				}
+				
+			}else{
+				uni.navigateTo({
+					url:'/pages/otc/orderDetails/orderDetails?slaveorderid=' + item.otherid
+				})
+			}
+		},
+		
+		// 取消订单
+		cancelOrder(opt){
+			let _this = this
+			uni.showModal({
+				content:"是否取消该挂单",
+				confirmText:"是",
+				cancelText:"否",
+				success: (re) => {
+					if(re.confirm){
+						_this.parameter.orderid = opt
+						_this.$API.c2ctransaction({ ..._this.parameter
+						}).then(res => {
+							uni.hideLoading()
+							if (res.data.state == 0) {
+								uni.showModal({
+									content: "提交成功",
+									showCancel: false,
+									success: () => {
+										_this.getOrderRecord()
+									}
+								})
+							} else {
+								if (res.data.message == "10111") {
+									uni.showModal({
+										content: "交易密码错误",
+										showCancel: false
+									})
+								} else if (res.data.message == "10170") {
+									uni.showModal({
+										content: "网络错误，请稍后重试",
+										showCancel: false
+									})
+								} else {
+									uni.showModal({
+										content: res.data.message,
+										showCancel: false
+									})
+								}
+							}
+						
+						}).catch(err => {
+							// error
+							uni.hideLoading()
+							console.log(err)
+							// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
+							// 一个通用的错
+						})
+					}
+				}
+			})
+		},
+		
+		// 初始化加载数据
+		getOrderRecord(){
+			const _this = this;
+			let userid = decode(this.userInfo.data);
+			// 我的出售
+			_this.$API.getOrderRecord({userid,page:"0",type:"0"}).then(res=>{
+				if(res.data.state == "0"&&res.statusCode == "200"){
+					_this.list[0] = res.data.data
+					_this.$forceUpdate() //二维数组，开启强制渲染
+				}else{
+					uni.showToast({
+					    title: "网络错误，请稍后重试",
+						icon: 'none',
+					});
+				}
+				// resolve(newData)
+			}).catch(err => {
+				// error
+				console.log(err)
+				// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
+				// 一个通用的错误提示组件就可以完成
+			})
+			_this.$API.getOrderRecord({userid,page:"0",type:"1"}).then(res=>{
+				if(res.data.state == "0"&&res.statusCode == "200"){
+					_this.list[1] = res.data.data
+					_this.$forceUpdate() //二维数组，开启强制渲染
+				}else{
+					uni.showToast({
+					    title: "网络错误，请稍后重试",
+						icon: 'none',
+					});
+				}
+				// resolve(newData)
+			}).catch(err => {
+				// error
+				console.log(err)
+				// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
+				// 一个通用的错误提示组件就可以完成
+			})
+			_this.$API.getOrderRecord({userid,page:"0",type:"2"}).then(res=>{
+				if(res.data.state == "0"&&res.statusCode == "200"){
+					_this.list[2] = res.data.data
+					_this.$forceUpdate() //二维数组，开启强制渲染
+				}else{
+					uni.showToast({
+					    title: "网络错误，请稍后重试",
+						icon: 'none',
+					});
+				}
+				// resolve(newData)
+			}).catch(err => {
+				// error
+				console.log(err)
+				// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
+				// 一个通用的错误提示组件就可以完成
+			})
+			_this.$API.getOrderRecord({userid,page:"0",type:"3"}).then(res=>{
+				if(res.data.state == "0"&&res.statusCode == "200"){
+					_this.list[3] = res.data.data
+					_this.$forceUpdate() //二维数组，开启强制渲染
+				}else{
+					uni.showToast({
+					    title: "网络错误，请稍后重试",
+						icon: 'none',
+					});
+				}
+				// resolve(newData)
+			}).catch(err => {
+				console.log(err)
+				// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
+				// 一个通用的错误提示组件就可以完成
+			})
+			_this.$API.getOrderRecord({userid,page:"0",type:"4"}).then(res=>{
+				if(res.data.state == "0"&&res.statusCode == "200"){
+					_this.list[4] = res.data.data
+					_this.$forceUpdate() //二维数组，开启强制渲染
+				}else{
+					uni.showToast({
+					    title: "网络错误，请稍后重试",
+						icon: 'none',
+					});
+				}
+				// resolve(newData)
+			}).catch(err => {
+				console.log(err)
+				// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
+				// 一个通用的错误提示组件就可以完成
+			})
+			
+			_this.$forceUpdate() //二维数组，开启强制渲染
+			uni.hideLoading()
 			setTimeout(() => {
 				this.mescroll.endSuccess()
-			},2000)
+			},1500)
 		},
 		
 		// 其他请求事件 当然刷新和其他请求可以写一起 多一层判断。
 		isRequest(pages) {
+			let userid = decode(this.userInfo.data);
+			var that = this
 			return new Promise((resolve, reject) => {
-				this.pages[this.currentTab]++
-				var that = this
-				setTimeout(() => {
+				that.$API.getOrderRecord({userid,page:that.pages[that.currentTab]+1,type:that.currentTab}).then(res=>{
 					uni.hideLoading()
-					uni.showToast({
-						icon: 'none',
-						title: `请求第${that.currentTab + 1 }个导航栏的第${that.pages[that.currentTab]}页数据成功`
-					})
-					let newData = ['新数据1','新数据2','新数据3']
-					resolve(newData)
-				}, 1000)
+					resolve(res.data.data)
+				}).catch(err => {
+					// error
+					console.log(err)
+					// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
+					// 一个通用的错误提示组件就可以完成
+				})
+				this.pages[this.currentTab]+=1
 			})
 		},
 		// swiper 滑动
@@ -156,7 +354,7 @@ export default {
 			this.isRequest().then((res)=>{
 				let tempList = this.list
 				tempList[this.currentTab] = tempList[this.currentTab].concat(res)
-				console.log(tempList)
+				// console.log(tempList)
 				this.list = tempList
 				this.$forceUpdate() //二维数组，开启强制渲染
 			})
@@ -175,7 +373,7 @@ export default {
 	  font-size: 28rpx;
 	  box-sizing: border-box;
 	  min-height: calc(100vh - 224rpx - var(--status-bar-height));
-	  overflow: hidden;
+	  // overflow: hidden;
 	  color: #6B8082;
 	  position: relative;
 	}
@@ -200,6 +398,7 @@ export default {
 		.card-info{
 			padding: 20rpx;
 			line-height: 1.6;
+			border-bottom: 1px solid #12224C;
 			
 			.card-info-left{
 				float: left;
@@ -208,7 +407,7 @@ export default {
 				
 				view:nth-child(2),
 				view:nth-child(3){
-					font-size: 28rpx;
+					font-size: 24rpx;
 				}
 				text{
 					color: #FCC44D;
@@ -242,9 +441,21 @@ export default {
 				}
 			}
 		}
-		.card-btn{
-			padding: 0 20rpx;
-			view{
+		
+		
+		.card-btn-bot{
+			padding: 20rpx 20rpx 0;
+			.card-btn-info{
+				float: left;
+				width: 50rpx;
+				height: 30rpx;
+				padding-top: 20rpx;
+				image{
+					width: 100%;
+					height: 100%;
+				}
+			}
+			.card-btn-btn{
 				float: right;
 				border: 1rpx solid #A3A3A3;
 				color: #A3A3A3;
@@ -253,6 +464,14 @@ export default {
 				line-height: 60rpx;
 				border-radius: 30rpx;
 			}
+		}
+		.card-btn{
+			float: right;
+			border-radius: 15rpx;
+			font-size: 24rpx;
+			color: #FCC44D;
+			border: 1px solid #FCC44D;
+			padding: 0 20rpx;
 		}
 		
 	}

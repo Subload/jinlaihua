@@ -50,7 +50,7 @@
 					<text>购买数量</text>
 					<!-- 数字 -->
 					<view>
-						<uni-number-box :min="1" :value="quantity" @change="change" />
+						<uni-number-box :min="1" :value="quantity" v-model="quantity" @change="change" />
 					</view>
 				</view>
 				<view class="store_order_info_server clearfix">
@@ -59,14 +59,14 @@
 				</view>
 				<view class="store_order_info_price clearfix">
 					<text>商品总价</text>
-					<view>¥{{storeInfo.price * quantity}}</view>
+					<view>¥{{(storeInfo.price * quantity).toFixed(2)}}</view>
 				</view>
 				
 				<view class="store_order_info_total clearfix">
 					<view class="store_order_info_total_submit" @click="togglePopup">提交订单</view>
 					<view class="store_order_info_total_price">
 						<text>共 {{quantity}} 件，</text>
-						<text>合计：¥{{storeInfo.price * quantity}}</text>
+						<text>合计：¥{{(storeInfo.price * quantity).toFixed(2)}}</text>
 					</view>
 				</view>
 			</view>
@@ -79,7 +79,7 @@
 					<text>付款详情</text>
 				</view>
 				<view class="main-box order_payment_bottom">
-					<view class="order_payment_bottom_price"><text>¥</text>{{storeInfo.price * quantity}}</view>
+					<view class="order_payment_bottom_price"><text>¥</text>{{(storeInfo.price * quantity).toFixed(2)}}</view>
 					<view class="clearfix">
 						<radio-group @change="radioChange">
 							<label class="uni-list-cell uni-list-cell-pd clearfix" v-for="(item, index) in items" :key="item.value">	
@@ -152,7 +152,7 @@
 			},
 			// 跳转选择地址或者添加地址
 			handleAddress(){
-				console.log(this.address.username)
+				// console.log(this.address.username)
 				// if(this.address.username){
 				// 	uni.navigateTo({
 				// 		url: "/pages/my/address/address",
@@ -176,7 +176,7 @@
 				uni.showLoading()
 				let userid = decode(this.userInfo.data)
 				this.$API.getBusinessOrder({userid,commdityid:this.storeInfo.id,commditynum:this.quantity}).then(res => {
-					console.log("获取默认地址",res)
+					// console.log("获取默认地址",res)
 					
 					if(res.statusCode == 200){
 						if(res.data.data.length>0){
@@ -241,21 +241,29 @@
 				// return
 				
 				this.$API.accomplishBusinessOrder(parameter).then(res => {
-					console.log("提交订单",res)
 					uni.hideLoading()
-					if(res.statusCode == 200){
-						console.log(res.data.data)
+					if(res.statusCode == '200' && res.data.state == '0'){
 						this.alipay_sdk = res.data.data
+						this.$refs['payment'].open()
+					}else{
+						uni.showModal({
+							content:"订单拉取失败，请返回后重新下单",
+							showCancel:false,
+							success:() => {
+								uni.navigateBack()
+							}
+						})
 					}
-					this.$refs['payment'].open()
 				}).catch(err => {
 					// error
 					uni.hideLoading();
-					this.emptyShow = true;
-					uni.showToast({
-						title: err.text,
-						icon: 'none',
-					});
+					uni.showModal({
+						content:"订单拉取失败，请返回后重新下单",
+						showCancel:false,
+						success:() => {
+							uni.navigateBack()
+						}
+					})
 					console.log(err)
 					// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
 					// 一个通用的错误提示组件就可以完成
@@ -278,7 +286,7 @@
 							case "9000":
 								uni.showModal({
 									title:"支付成功",
-									content:"支付成功，去认购金莱花通证？",
+									content:"支付成功，去认购JLH.MP？",
 									confirmText:"去认购",
 									success: (res) => {
 										if (res.confirm) {
@@ -355,7 +363,7 @@
 			radioChange(evt) {
 				for (let i = 0; i < this.items.length; i++) {
 					if (this.items[i].value === evt.target.value) {
-						console.log(this.items[i].value)
+						// console.log(this.items[i].value)
 						this.current = i;
 						break;
 					}

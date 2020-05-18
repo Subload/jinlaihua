@@ -17,7 +17,7 @@
 							<text>{{item.cmcMsg}}</text>
 							<text>{{item.cmcDate | timeStamp}}</text>
 						</view>
-						<view>{{item.cmcNumber>0?'+'+item.cmcNumber:item.cmcNumber}}</view>
+						<view>{{item.cmcNumber>0?'+'+item.cmcNumber:item.cmcNumber}}JLH.MP</view>
 					</view>
 				</view>
 				
@@ -48,9 +48,16 @@
 				},
 				// 上拉加载的常用配置
 				upOption: {
-					use: false, // 是否启用上拉加载; 默认true
-					auto: false, // 是否在初始化完毕之后自动执行上拉加载的回调; 默认true
-					
+					use: true, // 是否启用上拉加载; 默认true
+					auto: true, // 是否在初始化完毕之后自动执行上拉加载的回调; 默认true
+					page: {
+						num: 1, // 当前页码,默认0,回调之前会加1,即callback(page)会从1开始
+						size: 10 // 每页数据的数量,默认10
+					},
+					noMoreSize: 1, // 配置列表的总数量要大于等于5条才显示'-- END --'的提示
+					empty: {
+						tip: '暂无资产信息'
+					}
 				},
 				assetsList:[],
 				
@@ -59,7 +66,7 @@
 				
 				// 参数
 				cmcCommunicid:"",
-				pageNum:0,
+				pageNum:1,
 				pageSize:10
 			}
 		},
@@ -90,37 +97,48 @@
 			},
 			
 			// 资产详细记录
-			getlist(){
+			getlist(opt){
 				let userid = decode(this.userInfo.data);
-				this.$API.getlist({
-					userid,
-					cmcCommunicid:this.cmcCommunicid,
-					pageNum:this.pageNum,
-					pageSize:this.pageSize,
-				}).then(res => {
+				let pages={
+						userid,
+						cmcCommunicid:this.cmcCommunicid,
+						pageNum:this.pageNum,
+						pageSize:this.pageSize,
+					}
+				if(opt){
+					pages = {
+						userid,
+						cmcCommunicid:this.cmcCommunicid,
+						pageNum:opt.options.up.page.num,
+						pageSize:opt.options.up.page.size
+					}
+				}
+				
+				this.$API.getlist(pages).then(res => {
 					uni.hideLoading()
-					setTimeout(() => {
-						this.mescroll.endSuccess()
-					},2000)
-					console.log("资产详细记录",res)
-					if(res.statusCode == 200){
-						if(res.data.total>0){
-							this.assetsList = res.data.data;
-						}else{
-							this.emptyShow = true
-						}
-					}else{
-						uni.showToast({
-							title:"资产详细记录，请稍后刷新重新",
-							icon:"none"
+					if(res.statusCode != '200' || res.data.code != '0'){
+						uni.showModal({
+							content:"加载失败，请稍后重试",
+							showCancel:false,
+							success: () => {
+								uni.navigateBack()
+							}
 						})
+						return
+					}
+					if(opt){
+						this.assetsList=this.assetsList.concat(res.data.data);
+						this.mescroll.endSuccess(this.assetsList.length);
+						//设置列表数据
+					}else{
+						this.assetsList = res.data.data;
+						setTimeout(()=>{
+							this.mescroll.endSuccess()
+						},1500)
 					}
 				}).catch(err => {
 					// error
-					uni.showToast({
-						title: err.text,
-						icon: 'none',
-					});
+					this.mescroll.endErr()
 					console.log(err)
 					// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
 					// 一个通用的错误提示组件就可以完成
@@ -128,7 +146,15 @@
 			},
 			// 下拉刷新
 			downCallback(){
+				this.upOption.page={
+					num: 1, // 当前页码,默认0,回调之前会加1,即callback(page)会从1开始
+					size: 10 // 每页数据的数量,默认10
+				}
 				this.getlist();
+			},
+			// 上拉加载
+			upCallback(page){
+				this.getlist(page);
 			},
 			
 		}

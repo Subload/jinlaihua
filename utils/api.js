@@ -378,13 +378,75 @@ const api = {
 		return request.request({
 		    url: '/c2c/c2ctransaction',
 		    method: 'POST',
+			data: {
+				orderid:data.orderid,
+				...encode(data)
+			}
+		})
+	},
+	
+	// OTC我要买
+	selllist:(data) => {
+		return request.request({
+		    url: '/c2c/selllist',
+		    method: 'POST',
 			data: encode(data)
 		})
 	},
 	
+	// OTC我要卖
+	buylist:(data) => {
+		return request.request({
+		    url: '/c2c/buylist',
+		    method: 'POST',
+			data: encode(data)
+		})
+	},
 	
+	// OTC获取从单详情
+	getSlaveOrderDetail:(data) => {
+		return request.request({
+		    url: '/c2c/getSlaveOrderDetail',
+		    method: 'POST',
+			data: encode(data)
+		})
+	},
 	
+	// OTC获取主单详情
+	getMasterOrderDetail:(data) => {
+		return request.request({
+		    url: '/c2c/getMasterOrderDetail',
+		    method: 'POST',
+			data: encode(data)
+		})
+	},
 	
+	// 确认风险告知书
+	setcidzt:(data) => {
+		return request.request({
+		    url: '/account/setcidzt',
+		    method: 'POST',
+			data: encode(data)
+		})
+	},
+	
+	// 确认风险告知书
+	seniorCertificate:(data) => {
+		return request.request({
+		    url: '/account/seniorCertificate',
+		    method: 'POST',
+			data: encode(data)
+		})
+	},
+	
+	// 商城banner
+	getStratImg:(data) => {
+		return request.request({
+		    url: '/banner/getStratImg',
+		    method: 'POST',
+			data: encode(data)
+		})
+	},
 	
 	
 	
@@ -395,9 +457,13 @@ const api = {
 	// 提交反馈
 	putFeedback: config.baseUrl + '/leave/putFeedback',
 	// 实名认证
-	seniorCertificate: config.baseUrl + '/account/seniorCertificate',
+	// seniorCertificate: config.baseUrl + '/account/seniorCertificate',
 	// 上传收款方式
 	addPayment: config.baseUrl + '/c2c/addPayment',
+	// 提交反馈
+	appeal: config.baseUrl + '/c2c/appeal',
+	// c2c确认收款
+	collection: config.baseUrl + '/c2c/c2ctransaction',
 	
 	
 } 

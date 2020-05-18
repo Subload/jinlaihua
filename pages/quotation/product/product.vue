@@ -122,7 +122,7 @@
 					"daySurplussell": 1,
 					"price": 1,
 					"cmc_code": "JLH",
-					"cmc_name": "金莱花通证",
+					"cmc_name": "JLH.MP",
 					"cmc_logo": "",
 					"availablenumber": 0
 				},
@@ -131,14 +131,14 @@
 					balance: 0,
 					cmc_code: "JLH",
 					cmc_id: 10,
-					cmc_name: "金莱花通证",
+					cmc_name: "JLH.MP",
 					cmc_price: 1.01,
 					cmc_shrapnel: 0
 				},{
 					balance: 0,
 					cmc_code: "JLH",
 					cmc_id: 10,
-					cmc_name: "金莱花通证",
+					cmc_name: "JLH.MP",
 					cmc_price: 1.01,
 					cmc_shrapnel: 0
 				}],
@@ -229,7 +229,7 @@
 				uni.showLoading()
 				let _this = this
 				this.$API.shop({userid:decode(_this.userInfo.data),communicid:_this.dataInfo.cmc_id}).then(res=>{
-					console.log("shop",res)
+					// console.log("shop",res)
 					uni.hideLoading()
 					if(res.statusCode == 200){
 						if(res.data.state == "1"){
@@ -327,7 +327,7 @@
 			
 			// 拿到交易密码 并提交支付
 			getPaymentPassword(opt){
-				console.log(opt)
+				// console.log(opt)
 				this.paymentPassword = opt;
 				this.closePasskeyborad;
 				setTimeout(()=>{
@@ -347,7 +347,7 @@
 					num:this.numberOfExchanges,
 					paypass:this.paymentPassword
 				}).then(res => {
-					console.log("提交兑换",res)
+					// console.log("提交兑换",res)
 					uni.hideLoading()
 					if(res.statusCode == 200){
 						uni.showModal({
@@ -358,7 +358,7 @@
 								_this.exchange()
 							}
 						})
-						console.log(res.data)
+						// console.log(res.data)
 					}else{
 						uni.showToast({
 							title:"网络错误，请稍后重试",
@@ -398,7 +398,7 @@
 				uni.showLoading()
 				let userid = decode(this.userInfo.data);
 				this.$API.shopCommit({userid,communicid:this.dataInfo.cmc_id,num:this.purchaseQuantity}).then(res => {
-					console.log(res)
+					// console.log(res)
 					if(res.statusCode == 200){
 						this.goAliPay(res.data.data);
 					}else{
@@ -431,7 +431,7 @@
 						// 返回主要信息
 						let reData = res.rawdata;
 						reData = JSON.parse(reData);
-						console.log(reData)
+						// console.log(reData)
 						that.cancel()
 						switch (reData.resultStatus) {
 							case "9000":

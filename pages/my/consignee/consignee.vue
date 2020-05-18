@@ -126,7 +126,7 @@
 							}
 						})
 					}
-					console.log("添加收货地址",res)
+					// console.log("添加收货地址",res)
 				}).catch(err => {
 					// error
 					uni.showToast({
@@ -155,7 +155,7 @@
 			},
 			// 设置默认地址
 			setDefaultAdd(e){
-				console.log(e.target.value)
+				// console.log(e.target.value)
 				if(e.target.value){
 					this.consigneeData.consent = 0;
 					return

@@ -303,7 +303,7 @@
                         quality: 1,
                         canvasId: 'myCanvas',
                         success: function (res) {
-							console.log(_this.imgBolb[0])
+							// console.log(_this.imgBolb[0])
 							// return
 							if(!_this.imgBolb[0]){
 								uni.hideLoading()
@@ -324,10 +324,10 @@
 								 },
 								 success(res1) {
 									 // 显示上传信息
-									 console.log(res1)
+									 // console.log(res1)
 									 uni.hideLoading()
 									 let resData = JSON.parse(res1.data)
-									 console.log(resData)
+									 // console.log(resData)
 									if(resData.message == "10238"){
 										uni.showToast({
 											title:"上传成功",

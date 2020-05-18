@@ -97,7 +97,7 @@
 						uni.showLoading()
 						let _this = this
 						this.$API.getAppAzVersion().then((res)=>{
-							console.log("检查版本信息",res)
+							// console.log("检查版本信息",res)
 							if(res.statusCode == 200){
 								if(res.data.state == 0){
 									uni.hideLoading()
@@ -108,10 +108,10 @@
 											confirmText:"更新",
 											success: (re) => {
 												if (re.confirm) {
-													console.log(res.data.data)
+													// console.log(res.data.data)
 													plus.runtime.openURL(res.data.data.downurl)
 												} else if (re.cancel) {
-													console.log('用户点击取消');
+													// console.log('用户点击取消');
 												}
 											}
 										})
@@ -174,14 +174,12 @@
 									that.formatSize(); // 重新计算缓存  
 								}, function(e) {
 									uni.hideLoading()
-									console.log(e.message)  
 								});  
 							} else {  
 								entry.remove();  
 							}  
 						}, function(e) {
 							uni.hideLoading()
-							console.log('文件路径读取失败')  
 						});  
 					}  
 				} else { // ios暂时未找到清理缓存的方法，以下是官方提供的方法，但是无效，会报错  
@@ -218,7 +216,6 @@
 						that.setList[1].text = (sizeCache / 1073741824).toFixed(2) + "GB"; 
 					}  
 				});
-				 console.log(that.fileSizeString)
 			}
 		}
 	}

@@ -4,7 +4,8 @@ import Request from '@/components/myRequest/index.js'
 // 设置 通用的 baseUrl 以及 header
 const config = {
     // baseUrl: "http://192.168.1.18:80/trade",
-	baseUrl: "http://39.100.111.72:8888/trade",
+	// baseUrl: "http://39.100.111.72:8888/trade",
+	baseUrl: "http://118.190.140.2/trade",
     header: {"Content-Type": "application/x-www-form-urlencoded"},
     // 取消请求时的提示信息配置，自己根据自己的需要设置字段以及内容
     // 全局有效，可以在api的options中进行单独覆盖配置

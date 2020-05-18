@@ -17,9 +17,9 @@
 			</view>
 			<view class="editPw">
 				<view>短信验证码</view>
-				<input password type="text" class="systemCode" placeholder="请输入短信验证码" v-model="password.smsCode" />
-				<view v-show="showGetBtn" class="systemCodeBtn" @click="getSmsCode">获取验证码</view>
-				<view v-show="!showGetBtn" class="systemCodeBtn countDownBtn">{{countDownBtnText}}</view>
+				<input type="text" class="systemCode" placeholder="请输入短信验证码" v-model="password.smsCode" />
+				<view v-if="showSmsBtn" class="systemCodeBtn" @click="getSmsCode">获取验证码</view>
+				<view v-else class="systemCodeBtn countDownBtn">{{smsBtnText}}</view>
 			</view>
 		</view>
 		<view class="btn editPw_btn" @click="handleEdit">确认修改</view>
@@ -31,25 +31,22 @@
 	import { decode } from '@/utils/des3.js' // 参数加密方法
 	import {
 		mapState,
+		mapMutations
 	} from 'vuex';
 	
-	var time = 60;
-	var timeDown;
-	
 	export default {
-		computed: mapState([ 'hasLogin','userInfo']),
+		computed: mapState([ 'hasLogin','userInfo','showSmsBtn','smsBtnText']),
 		data() {
 			return {
 				password:{
 					newPw:"",
 					reNewPw:"",
 					smsCode:""
-				},
-				showGetBtn:true,
-				countDownBtnText:"60秒后重新获取"
+				}
 			}
 		},
 		methods: {
+			...mapMutations(['smsCountdown']),
 			handleLeftClick(){
 				uni.navigateBack({});
 			},
@@ -102,14 +99,14 @@
 				let par = {
 					userid:decode(this.userInfo.data),
 					tradpassword:this.password.newPw,
-					name:this.userInfo.accountinfo.data.name,
+					name:this.userInfo.accountinfo.data.phone,
 					code:this.password.smsCode,
 					// sign:
 				}
 				
 				uni.showLoading()
 				
-				this.$API.setTradPassword(par).then(res => {
+				this.$API.setTradPassword({...par}).then(res => {
 					
 					// 10001验证码过期  10002 验证码错误 10021 验证通过 10042 系统错误
 					
@@ -128,30 +125,22 @@
 							})
 							break;
 						case "10021":
-							_this.$store.state.userInfo.accountinfo.data.tradpassword  = 1;
+							this.$store.state.userInfo.accountinfo.data.tradpassword  = "1";
 							uni.showToast({
 								title:"设置成功",
 								icon:"none"
 							})
 							setTimeout(()=>{
-								uni.navigateBack({
-									delta:1
-								})
+								uni.navigateBack()
 							},1500)
-							break;
-						case "10042":
-							uni.showToast({
-								title:"系统错误",
-								icon:"none"
-							})
 							break;
 						default:
 							uni.showToast({
-								title:"系统错误",
+								title:"系统错误，请重试",
 								icon:"none"
 							})
 					}
-					console.log(res)
+					// console.log(res)
 				}).catch(err => {
 					// error
 					uni.hideLoading()
@@ -164,13 +153,12 @@
 					// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
 					// 一个通用的错误提示组件就可以完成
 				})
-				console.log(this.password)
+				// console.log(this.password)
 			},
 			
 			// 获取验证码
 			getSmsCode(){
 				let userid = decode(this.userInfo.data)
-				this.countDown()
 				this.$API.sendCodeByUser({userid}).then(res => {
 					// success
 					if(res.data.message == 10073){
@@ -178,54 +166,23 @@
 							title:"验证码已发送，请注意查收",
 							icon:"none",
 						})
+						this.smsCountdown()
 						return
 					}else if(res.data.message == 10045){
-						time = 60;
-						this.showGetBtn = !this.showGetBtn;
-						clearInterval(timeDown);
 						uni.showToast({
 							title:"该账号不存在",
 							icon:"none",
 						})
 						return
 					}
-					time = 60;
-					this.showGetBtn = !this.showGetBtn;
-					clearInterval(timeDown);
 					uni.showToast({
 						title:res.data.message,
 						icon:"none"
 					})
-					
-					// 更改倒计时状态
-					console.log(res)
 				}).catch(err => {
 					// error
-					time = 60;
-					this.showGetBtn = !this.showGetBtn;
-					clearInterval(timeDown);
-					uni.showToast({
-					    title: err.text,
-						icon: 'none',
-					    duration: 2000
-					});
 					console.log(err)
-					// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
-					// 一个通用的错误提示组件就可以完成
 				})
-			},
-			// 倒计时
-			countDown(){
-				this.showGetBtn = !this.showGetBtn;
-				timeDown = setInterval(()=>{
-					this.countDownBtnText = time+"秒后重新获取";
-					time-=1;
-					if(time == 0){
-						time = 60;
-						this.showGetBtn = !this.showGetBtn;
-						clearInterval(timeDown);
-					}
-				},1000)
 			},
 			
 		}
@@ -254,7 +211,7 @@
 .systemCode{
 	width: 50%;
 }
-.systemCodeBtn{
+.editPw .systemCodeBtn{
 	position: absolute;
 	right: 20rpx;
 	bottom: 0;

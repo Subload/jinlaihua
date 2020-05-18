@@ -43,7 +43,7 @@
 					<view class="price">
 						<view class="priceTitle">当前价格：{{shopData.price}}元</view>
 						<view class="priceInput">
-							<input type="number" pattern="[0-9]*" v-model="quantity" placeholder="购买量:请输入2000的倍数" />
+							<input type="number" pattern="[0-9]*" v-model="quantity" @change="toTrunc" placeholder="购买量:请输入2000的倍数" />
 						</view>
 						<view class="priceTitle" style="color: #999;font-size: 24rpx;padding-top: 0;">您的最大可购买数量：{{shopData.availablenumber}}</view>
 					</view>
@@ -82,15 +82,15 @@
 		data() {
 			return {
 				shopData:{
-					"totalcirculation": 15000000,
-					"sold": 90000,
+					"totalcirculation": 1,
+					"sold": 1,
 					"cmc_desc": "",
-					"daycirculation": 100000,
-					"daySurplussell": 10000,
+					"daycirculation": 1,
+					"daySurplussell": 1,
 					"price": 1,
 					"cmc_code": "JLH",
-					"cmc_name": "金莱花通证",
-					"cmc_logo": "http://39.100.111.72:8888/static/logo.png",
+					"cmc_name": "JLH.MP",
+					"cmc_logo": "http://118.190.140.2/static/logo.png",
 					"availablenumber": 0
 				},
 				quantity:"",
@@ -132,11 +132,19 @@
 			uni.showLoading()
 			this.shop();
 		},
+		onBackPress(e) {
+			if (e.from == 'backbutton') {
+				uni.switchTab({
+				    url: "/pages/store/store"
+				});
+				return true; //阻止默认返回行为
+			}
+		},
 		methods: {
 			handleLeftClick(){
-				uni.navigateBack({
-					delta:1
-				})
+				uni.switchTab({
+					url: "/pages/store/store"
+				});
 			},
 			/*下拉刷新的回调, 有三种处理方式:*/
 			downCallback(){
@@ -144,46 +152,37 @@
 				this.shop();
 			},
 			
+			// 转为整数
+			toTrunc(){
+				this.quantity = (parseInt(Math.trunc(this.quantity)/2000)*2000).toFixed(0)
+			},
+			
 			// 通证购买页面数据展示
 			shop(){
 				let userid = decode(this.userInfo.data);
 				this.$API.shop({userid,communicid:10}).then((res) => {
-					console.log("通证购买页面数据展示",res)
 					uni.hideLoading()
+					if(res.statusCode != '200' || res.data.state != '0'){
+						uni.showModal({
+							content:res.data.message,
+							showCancel:false,
+							success: () => {
+								uni.navigateBack({
+									delta:1
+								})
+							}
+						})
+						return
+					}
+					this.shopData = res.data.data;
 					setTimeout(() => {
 						this.mescroll.endSuccess()
 					},1500)
-					if(res.statusCode == 200){
-						if(res.data.state == 0){
-							this.shopData = res.data.data;
-						}else{
-							uni.showModal({
-								content:res.data.message,
-								showCancel:false,
-								success: () => {
-									uni.navigateBack({
-										delta:1
-									})
-								}
-							})
-						}
-					}else{
-						uni.showToast({
-							title:"网络错误",
-							icon:"none"
-						})
-					}
+					
 				}).catch(err => {
 					// error
 					uni.hideLoading();
-					setTimeout(() => {
-						this.mescroll.endSuccess()
-					},1500)
-					uni.showToast({
-					    title: err.text,
-						icon: 'none',
-					    duration: 2000
-					});
+					this.mescroll.endErr()
 					console.log(err)
 					// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
 					// 一个通用的错误提示组件就可以完成
@@ -243,7 +242,7 @@
 				uni.showLoading()
 				let userid = decode(this.userInfo.data);
 				this.$API.shopCommit({userid,communicid:10,num:this.quantity}).then(res => {
-					console.log(res)
+					// console.log(res)
 					if(res.statusCode == 200){
 						if(res.data.statestate == "1"){
 							uni.showModal({
@@ -341,7 +340,7 @@
 						
 				    },
 				    fail: function (err) {
-						console.log(err)
+						// console.log(err)
 						uni.hideLoading()
 						uni.showToast({
 							title:"支付失败",

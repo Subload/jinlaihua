@@ -46,7 +46,7 @@
 			// 提交api 更新缓存，返回上一页
 			handleDefine(){
 				let _this = this
-				console.log(this.nickName)
+				// console.log(this.nickName)
 				if(!this.nickName){
 					uni.showToast({
 						title:"昵称不可为空！",
@@ -58,14 +58,14 @@
 				let userid = decode(this.userInfo.data);
 				let image = this.userInfo.accountinfo.data.icon;
 				this.$API.updatenickname({img:"",nickname:this.nickName,userid}).then(res => {
-					console.log("更新昵称",res)
+					// console.log("更新昵称",res)
 					uni.hideLoading()
 					if(res.statusCode == 200){
 						uni.showToast({
 							title:"成功",
 							icon:"none"
 						})
-						console.log(this.nickName)
+						// console.log(this.nickName)
 						this.$store.state.userInfo.accountinfo.data.nickname = this.nickName;
 						this.login(this.userInfo)
 						uni.navigateBack({

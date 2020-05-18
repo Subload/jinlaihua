@@ -60,19 +60,13 @@
 			// 修改头像
 			editPortrait(){
 				uni.navigateTo({
-					url: '/pages/my/editPortrait/editPortrait',
-					fail: (res) => {
-						console.log(res)
-					}
+					url: '/pages/my/editPortrait/editPortrait'
 				});
 			},
 			// 修改昵称
 			editNickName(){
 				uni.navigateTo({
-					url: '/pages/my/editNickName/editNickName',
-					fail: (res) => {
-						console.log(res)
-					}
+					url: '/pages/my/editNickName/editNickName'
 				});
 			},
 		}

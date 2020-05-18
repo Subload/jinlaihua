@@ -84,7 +84,7 @@
 			getreceivingAddressByidList(){
 				let userid = decode(this.userInfo.data)
 				this.$API.getreceivingAddressByidList({userid,start:0,limit:99}).then(res => {
-					console.log("用户地址列表",res)
+					// console.log("用户地址列表",res)
 					uni.hideLoading()
 					if(res.data.data && res.data.data.length>0){
 						this.emptyShow = false;

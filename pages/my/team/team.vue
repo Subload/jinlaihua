@@ -13,7 +13,7 @@
 				<view class="team_my_lv">
 					{{userInfo.accountinfo.data.nickname}}:
 					<text>
-						{{userInfo.accountinfo.data.cmc_grade == 0?"普通用户":
+						{{userInfo.accountinfo.data.cmc_grade == 0?"花粉":
 						userInfo.accountinfo.data.cmc_grade == 1?"普通会员":
 						userInfo.accountinfo.data.cmc_grade == 2?"区级代理":
 						userInfo.accountinfo.data.cmc_grade == 3?"市级代理":
@@ -43,7 +43,7 @@
 					</view>
 					<!-- <view class="team_lv" v-html="item.setnumber">{{item.setnumber}}</view> -->
 					<view class="team_num">
-						<text>认购通证数量:</text><br/>{{item.setnumber}}
+						<text>认购JLH.MP数量:</text><br/>{{item.setnumber}}
 					</view>
 				</view>
 			</view>
@@ -88,7 +88,7 @@
 			getMyTeam(){
 				let userid = decode(this.userInfo.data);
 				this.$API.getMyTeam({userid}).then(res => {
-					console.log("获取我的团队收益",res)
+					// console.log("获取我的团队收益",res)
 					if(res.statusCode == 200){
 						if(res.data.state == 0){
 							this.myInfo = res.data.data;

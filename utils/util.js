@@ -93,11 +93,15 @@ const regName = function(str){
 
 //匹配身份证
 const regIDC = function (str) {
-     return !RegExp(/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/).test(str);
+     return !RegExp(/^[1-9]\d{5}(18|19|20|(3\d))\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/).test(str);
 }
 //匹配手机号
 const regPhone = function (str) {
-     return !RegExp(/^1[34578]\d{9}$/).test(str);
+     return !RegExp(/^1[3456789]\d{9}$/).test(str);
+}
+// 银行卡正则
+const regBackCode = function (str) {
+     return !RegExp(/^[1-9]\d{12,18}$/).test(str);
 }
 //匹配验证码
 const regCheckNum = function (str) {
@@ -136,6 +140,7 @@ module.exports = {
 	regPassword : regPassword,
 	regPhone : regPhone,
 	regName:regName,
+	regBackCode:regBackCode,
 	regIDC:regIDC,
 	regEmail:regEmail,
 	regCheckNum:regCheckNum,

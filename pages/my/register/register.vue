@@ -14,14 +14,14 @@
 		<view class="main-box">
 			<view class="login_item">
 				<text class="login_item_text">手机号</text>
-				<input class="login_item_input" type="number" v-model="parameter.name" placeholder="请输入手机号/邮箱" />
+				<input class="login_item_input" type="number" v-model="parameter.name" placeholder="请输入手机号" />
 			</view>
 			<view class="clear30"></view>
 			<view class="login_item">
 				<text class="login_item_text">手机验证码</text>
 				<input class="login_item_input systemCode" type="number" v-model="parameter.system" placeholder="请输入验证码" />
-				<view v-show="showGetBtn" class="systemCodeBtn" @click="getSystem">获取手机验证码</view>
-				<view v-show="!showGetBtn" class="systemCodeBtn countDownBtn">{{countDownBtnText}}</view>
+				<view v-if="showSmsBtn" class="systemCodeBtn" @click="getSystem">获取手机验证码</view>
+				<view v-else class="systemCodeBtn countDownBtn">{{smsBtnText}}</view>
 			</view>
 			<view class="clear30"></view>
 			<view class="login_item">
@@ -50,10 +50,13 @@
 <script>
 	import {regPhone,regPassword,regCheckNum} from '@/utils/util.js'
 	
-	var time = 60;
-	var timeDown;
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex';
 	
 	export default {
+		computed: mapState([ 'showSmsBtn','smsBtnText']),
 		data() {
 			return {
 				parameter:{
@@ -63,16 +66,11 @@
 					system:"", // 验证码
 					tgm:"" // 推荐码
 				},
-				// 倒计时显示
-				showGetBtn:true,
-				countDownBtnText:"60秒后重新获取",
-				
 				// 《风险告知书》
 				radioChecked:false
 			}
 		},
 		onBackPress(e) {
-			console.log(e);
 			if (e.from == 'backbutton') {
 				uni.switchTab({
 				    url: "/pages/notice/notice"
@@ -81,6 +79,7 @@
 			}
 		},
 		methods: {
+			...mapMutations(['smsCountdown']),
 			handleLeftClick(){
 				uni.switchTab({
 				    url: "/pages/notice/notice"
@@ -88,10 +87,7 @@
 			},
 			handleRightClick(){
 				uni.navigateTo({
-				    url: '../login/login',
-					fail: (res) => {
-						console.log(res)
-					}
+				    url: '../login/login'
 				});
 			},
 			// 点击《风险告知书》
@@ -151,37 +147,48 @@
 				
 				this.$API.registerComplete(this.parameter).then(res => {
 					// success
-					if(res.data.message == "10089"){
-						uni.showToast({
-							title:"推荐码不存在",
-							icon:"none",
-						})
-					}else if(res.data.message == "10005"){
-						uni.showToast({
-							title: "该账号已存在",
-							icon: "none",
-						})
-					}else if(res.data.message == "10004"){
-						uni.showToast({
-							title:"注册成功",
-							icon:"none",
-							success: (res) => {
-								setTimeout(() => {
-									that.handleRightClick()
-								},1500)
-							},
-							fail: (res) => {
-								console.log(res)
-							}
-						})
-					}else{
-						uni.showToast({
-							title:"网络错误，请重试",
-							icon:"none",
-						})
+					switch(res.data.message){
+						case "10001":
+							uni.showToast({
+								title:"验证码过期，请重新获取",
+								icon:"none"
+							})
+							break;
+						case "10002":
+							uni.showToast({
+								title:"验证码错误，请重新输入",
+								icon:"none"
+							})
+							break;
+						case "10089":
+							uni.showToast({
+								title:"推荐码不存在",
+								icon:"none",
+							})
+							break;
+						case "10005":
+							uni.showToast({
+								title: "该账号已存在",
+								icon: "none",
+							})
+							break;
+						case "10004":
+							uni.showToast({
+								title:"注册成功",
+								icon:"none",
+								success: (res) => {
+									setTimeout(() => {
+										that.handleRightClick()
+									},1500)
+								}
+							})
+							break;
+						default:
+							uni.showToast({
+								title:"网络错误，请重试",
+								icon:"none"
+							})
 					}
-					
-					console.log(res)
 				}).catch(err => {
 					// error
 					uni.showToast({
@@ -195,6 +202,7 @@
 				})
 				
 			},
+			// 获取验证码
 			getSystem(){
 				if(regPhone(this.parameter.name)){
 					uni.showToast({
@@ -204,7 +212,6 @@
 					})
 					return
 				};
-				this.countDown()
 				this.$API.registerSendCode({name:this.parameter.name,area:this.parameter.area}).then(res => {
 					// success
 					if(res.data.message == 10073){
@@ -212,45 +219,19 @@
 							title:"验证码已发送，请注意查收",
 							icon:"none",
 						})
+						this.smsCountdown()
 					}else{
-						time = 60;
-						this.showGetBtn = !this.showGetBtn;
-						clearInterval(timeDown);
 						uni.showToast({
 							title:res.data.message,
 							icon:"none",
 						})
 					}
-					
-					// 更改倒计时状态
-					console.log(res)
 				}).catch(err => {
 					// error
-					time = 60;
-					this.showGetBtn = !this.showGetBtn;
-					clearInterval(timeDown);
-					uni.showToast({
-					    title: err.text,
-						icon: 'none',
-					    duration: 2000
-					});
 					console.log(err)
 					// err 有可能是 Error 对象，也有可能是 您自己定义的内容，处理的时候您需要自己判断
 					// 一个通用的错误提示组件就可以完成
 				})
-			},
-			// 倒计时
-			countDown(){
-				this.showGetBtn = !this.showGetBtn;
-				timeDown = setInterval(()=>{
-					this.countDownBtnText = time+"秒后重新获取";
-					time-=1;
-					if(time == 0){
-						time = 60;
-						this.showGetBtn = !this.showGetBtn;
-						clearInterval(timeDown);
-					}
-				},1000)
 			},
 			
 		}

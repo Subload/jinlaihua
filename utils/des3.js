@@ -1,3 +1,7 @@
+const CryptoJS = require('crypto-js');
+
+
+// 原des3
 const des = (key, message, encrypt, mode, iv, padding) => {
     if(encrypt) //如果是加密的话，首先转换编码
         message = unescape(encodeURIComponent(message));
@@ -203,7 +207,7 @@ function pad(key) {
     return key;
 }
 
-var key = 'liugongan_yzcm@cloudwallet5@163.com';
+const key = 'liugongan_yzcm@cloudwallet5@163.com';
 
 //var key = '20191025ylkj10@trade@126.com';
 //
@@ -221,25 +225,56 @@ var DES3 = {
     }
 };
 
+
+
+
+// const key = 'liugongan_yzcm@cloudwallet5@163.com' //加密秘钥  
+const iv = '_wallet_' //偏移量  
+
+// 解密
+// export function decode(ciphertext) {
+// 	const keyHex = CryptoJS.enc.Utf8.parse(key);
+// 	// direct decrypt ciphertext  
+// 	const decrypted = CryptoJS.TripleDES.decrypt({
+// 		ciphertext: CryptoJS.enc.Base64.parse(ciphertext)
+// 	}, keyHex, {
+// 		iv: CryptoJS.enc.Utf8.parse(iv),
+// 		mode: CryptoJS.mode.CBC,
+// 		padding: CryptoJS.pad.Pkcs7
+// 	});
+// 	return decrypted.toString(CryptoJS.enc.Utf8);
+// }
+// 解密
 export function decode(data){
 	var newData='';
 	newData = DES3.decrypt(data);
 	return newData;
 }
-export function encode(data){
-	if(data){
-		if(data.constructor === Object){
-			var newData={};
+
+// 加密
+export function encode(data) {
+	const keyHex = CryptoJS.enc.Utf8.parse(key);
+	if (data) {
+		if (data.constructor === Object) {
+			var encrypted = {};
 			for (let item in data) {
-				newData[item] = DES3.encrypt(data[item]);
+				let dataItem = data[item].toString()
+				var encryptedstr = CryptoJS.TripleDES.encrypt(dataItem, keyHex, {
+					iv: CryptoJS.enc.Utf8.parse(iv),
+					mode: CryptoJS.mode.CBC,
+					padding: CryptoJS.pad.Pkcs7
+				});
+				encryptedstr = encryptedstr.toString();
+				encrypted[item] = encryptedstr;
 			};
-		}else{
-			var newData='';
-			newData = DES3.encrypt(data);
+		} else {
+			var encrypted = CryptoJS.TripleDES.encrypt(data, keyHex, {
+				iv: CryptoJS.enc.Utf8.parse(iv),
+				mode: CryptoJS.mode.CBC,
+				padding: CryptoJS.pad.Pkcs7
+			});
+			encrypted = encrypted.toString();
 		}
-		return newData;
+		return encrypted;
 	}
 }
-
-
-

@@ -9,11 +9,11 @@
 		
 		<view>
 			<view class="paymentMethod_list clearfix" @click="editPhone">
-				<text class="paymentMethod_name">绑定手机号</text>
+				<text class="paymentMethod_name">修改手机号</text>
 				<view class="paymentMethod_right">
 					<image class="pro-list-img" src="/static/my/arrow@3x.png" mode="aspectFit"></image>
 				</view>
-				<view class="paymentMethod_set">绑定</view>
+				<view class="paymentMethod_set">修改</view>
 			</view>
 			<view class="paymentMethod_list clearfix" @click="editPassword">
 				<text class="paymentMethod_name">登录密码</text>
@@ -28,21 +28,21 @@
 				<view class="paymentMethod_right">
 					<image class="pro-list-img" src="/static/my/arrow@3x.png" mode="aspectFit"></image>
 				</view>
-				<view class="paymentMethod_set">{{userInfo.accountinfo.data.tradpassword == 0?"未设置":"修改"}}</view>
+				<view class="paymentMethod_set">{{userInfo.accountinfo.data.tradpassword == '0'?"未设置":"修改"}}</view>
 			</view>
-			<view v-if="userInfo.accountinfo.data.senior == 0 ||userInfo.accountinfo.data.senior == 2"  class="paymentMethod_list clearfix" @click="editRealName">
+			<view v-if="userInfo.accountinfo.data.senior == '0' ||userInfo.accountinfo.data.senior == '2'"  class="paymentMethod_list clearfix" @click="editRealName">
 				<text class="paymentMethod_name">实名认证</text>
 				<view class="paymentMethod_right">
 					<image class="pro-list-img" src="/static/my/arrow@3x.png" mode="aspectFit"></image>
 				</view>
-				<view class="paymentMethod_set">{{userInfo.accountinfo.data.senior == 0?"未实名":"审核失败"}}</view>
+				<view class="paymentMethod_set">{{userInfo.accountinfo.data.senior == '0'?"未实名":"审核失败"}}</view>
 			</view>
-			<view  v-if="userInfo.accountinfo.data.senior == 1 ||userInfo.accountinfo.data.senior == 3"  class="paymentMethod_list clearfix" >
+			<view  v-if="userInfo.accountinfo.data.senior == '1' ||userInfo.accountinfo.data.senior == '3'"  class="paymentMethod_list clearfix" >
 				<text class="paymentMethod_name">实名认证</text>
 				<view class="paymentMethod_right">
 					<image class="pro-list-img" src="/static/my/arrow@3x.png" mode="aspectFit"></image>
 				</view>
-				<view class="paymentMethod_set">{{userInfo.accountinfo.data.senior == 1?"审核中":"已审核"}}</view>
+				<view class="paymentMethod_set">{{userInfo.accountinfo.data.senior == '1'?"审核中":"已审核"}}</view>
 			</view>
 			
 		</view>
@@ -71,37 +71,25 @@
 			// 修改密码
 			editPassword(){
 				uni.navigateTo({
-					url: '/pages/my/editPassword/editPassword',
-					fail: (res) => {
-						console.log(res)
-					}
+					url: '/pages/my/editPassword/editPassword'
 				});
 			},
 			// 修改交易密码
 			editTradePassword(){
 				uni.navigateTo({
-					url: '/pages/my/editTradePassword/editTradePassword',
-					fail: (res) => {
-						console.log(res)
-					}
+					url: '/pages/my/editTradePassword/editTradePassword'
 				});
 			},
 			// 修改交易密码
 			editPhone(){
 				uni.navigateTo({
-					url: '/pages/my/editPhone/editPhone',
-					fail: (res) => {
-						console.log(res)
-					}
+					url: '/pages/my/editPhone/editPhone'
 				});
 			},
 			// 修改交易密码
 			editRealName(){
 				uni.navigateTo({
-					url: '/pages/my/editRealName/editRealName',
-					fail: (res) => {
-						console.log(res)
-					}
+					url: '/pages/my/editRealName/editRealName'
 				});
 			}
 		}
