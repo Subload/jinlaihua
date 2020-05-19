@@ -453,16 +453,16 @@
 
 <style lang="less">
     /* pages/uni-cropper/index.wxss */
-    .uni-content-info {
-        /* position: fixed;
+    /* .uni-content-info {
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
         display: block;
         align-items: center;
-        flex-direction: column; */
-    }
+        flex-direction: column; 
+    }*/
     .cropper-config {
         width: 100%;
         display: flex;

@@ -28,10 +28,6 @@
 </script>
 
 <style>
-	.content {
-
-	}
-
 	.logo {
 		height: 200rpx;
 		width: 200rpx;

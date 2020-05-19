@@ -18,37 +18,40 @@
 					<swiper-item v-for="(listItem,listIndex) in list" :key="listIndex">
 						<scroll-view style="height: 100%;" scroll-y="true" @scrolltolower="lower" scroll-with-animation >
 								<view class='content'>
-									<view class='card' v-for="(item,index) in listItem" v-if="listItem.length > 0" :key="index">
-										<view class="card-sj clearfix">
-											时间：{{item.sj}}
-											<view class="card-btn" v-if="item.state">{{item.state == "0"?"挂单中":item.state == "1"?"待买家付款":item.state == "2"?"待卖家确认收款":item.state == "3"?"已撤销":item.state == "5"?"已完成":item.state == "4"?"申诉中":"未知状态"}}</view>
-											<view class="card-btn" v-else>已完成</view>
-										</view>
-										<view class="clearfix card-info" @click="jumpTo(item)">
-											<view class="card-info-left">
-												<view><text>{{item.type=='0'?"买入":"出售"}}</text>{{item.symbol}}</view>
-												<view v-if="item.ordernumber">订单号：{{item.ordernumber}}</view>
-												<view v-if="item.buyer">
-													<view v-if="item.buyer">买入：{{item.buyer}}</view>
-													<view v-if="item.seller">卖出：{{item.seller}}</view>
+									<view v-if="listItem.length > 0">
+										<view class='card' v-for="(item,index) in listItem" :key="index">
+											<view class="card-sj clearfix">
+												时间：{{item.sj}}
+												<view class="card-btn" v-if="item.state">{{item.state == "0"?"挂单中":item.state == "1"?"待买家付款":item.state == "2"?"待卖家确认收款":item.state == "3"?"已撤销":item.state == "5"?"已完成":item.state == "4"?"申诉中":"未知状态"}}</view>
+												<view class="card-btn" v-else>已完成</view>
+											</view>
+											<view class="clearfix card-info" @click="jumpTo(item)">
+												<view class="card-info-left">
+													<view><text>{{item.type=='0'?"买入":"出售"}}</text>{{item.symbol}}</view>
+													<view v-if="item.ordernumber">订单号：{{item.ordernumber}}</view>
+													<view v-if="item.buyer">
+														<view v-if="item.buyer">买入：{{item.buyer}}</view>
+														<view v-if="item.seller">卖出：{{item.seller}}</view>
+													</view>
+													<view v-else>
+														<view v-if="item.type">{{item.type=='0'?"出售方":"买入方"}}：{{item.name}}</view>
+													</view>
 												</view>
-												<view v-else>
-													<view v-if="item.type">{{item.type=='0'?"出售方":"买入方"}}：{{item.name}}</view>
+												<view class="card-info-right">
+													<view>¥<text>{{item.price?Number(item.price).toFixed(2):(item.cny/item.copyquantity).toFixed(2)}}</text></view>
+													<view>X{{item.residuequantity?(item.residuequantity==item.copyquantity?item.copyquantity:item.residuequantity=='0.00'?item.quantity:item.residuequantity):(item.copyquantity?item.copyquantity:item.quantity)}}</view>
+													<!-- <view class="card-info-total">总额：¥<text>{{item.cny?item.cny:item.tranprice?item.tranprice:(item.price*item.quantity).toFixed(2)}}</text></view> -->
+													<view class="card-info-total">总额：¥<text>
+													{{((item.price?Number(item.price).toFixed(2):(item.cny/item.copyquantity).toFixed(2))*(item.residuequantity?(item.residuequantity==item.copyquantity?item.copyquantity:item.residuequantity=='0.00'?item.quantity:item.residuequantity):(item.copyquantity?item.copyquantity:item.quantity))).toFixed(2)}}
+													</text></view>
 												</view>
 											</view>
-											<view class="card-info-right">
-												<view>¥<text>{{item.price?Number(item.price).toFixed(2):(item.cny/item.copyquantity).toFixed(2)}}</text></view>
-												<view>X{{item.residuequantity?(item.residuequantity==item.copyquantity?item.copyquantity:item.residuequantity=='0.00'?item.quantity:item.residuequantity):(item.copyquantity?item.copyquantity:item.quantity)}}</view>
-												<!-- <view class="card-info-total">总额：¥<text>{{item.cny?item.cny:item.tranprice?item.tranprice:(item.price*item.quantity).toFixed(2)}}</text></view> -->
-												<view class="card-info-total">总额：¥<text>
-												{{((item.price?Number(item.price).toFixed(2):(item.cny/item.copyquantity).toFixed(2))*(item.residuequantity?(item.residuequantity==item.copyquantity?item.copyquantity:item.residuequantity=='0.00'?item.quantity:item.residuequantity):(item.copyquantity?item.copyquantity:item.quantity))).toFixed(2)}}
-												</text></view>
+											<view class="card-btn-bot clearfix" v-if="item.state&&item.state=='0'">
+												<view class="card-btn-btn" @click="cancelOrder(item.orderid)">撤销</view>
 											</view>
-										</view>
-										<view class="card-btn-bot clearfix" v-if="item.state&&item.state=='0'">
-											<view class="card-btn-btn" @click="cancelOrder(item.orderid)">撤销</view>
 										</view>
 									</view>
+									
 									<view class='noCard' v-if="listItem.length===0">
 										暂无信息
 									</view>

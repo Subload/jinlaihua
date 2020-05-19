@@ -196,6 +196,6 @@
 	}
 	.consignee_list_m{
 		float: right;
-		display: inline-block;
+		/* display: inline-block; */
 	}
 </style>

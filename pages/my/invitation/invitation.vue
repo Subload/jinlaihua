@@ -123,11 +123,11 @@
 	position: relative;
 	padding: 10px;
 }
-.invite_box image{
-	/* padding-top: 10rpx;
+/* .invite_box image{
+	padding-top: 10rpx;
 	width: calc(100% - 10rpx);
-	height: calc(100% - 10rpx); */
-}
+	height: calc(100% - 10rpx); 
+}*/
 .invite_btn{
 	width: 270rpx;
 	display: block;

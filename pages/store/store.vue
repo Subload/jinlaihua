@@ -287,9 +287,9 @@
 		flex-wrap:wrap;
 		justify-content:space-between;
 	}
-	.pro-type-item{
-		/* flex: 1; */
-	}
+	/* .pro-type-item{
+		flex: 1;
+	} */
 	.pro-type-img{
 		width: 80rpx;
 		height: 80rpx;

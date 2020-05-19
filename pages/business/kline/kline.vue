@@ -388,10 +388,6 @@ export default
 		justify-content: center;
 	}
 
-	.title {
-		/* font-size: 36upx; */
-		/* color: #8f8f94; */
-	}
 	.button-sp-area button{
 		margin: 0 20rpx;
 	}
